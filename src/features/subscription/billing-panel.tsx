@@ -22,7 +22,7 @@ interface BillingInfo {
 }
 
 export function BillingPanel({ billing }: { billing: BillingInfo }) {
-  const { data: session, update } = useSession();
+  const { update } = useSession();
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);

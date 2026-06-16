@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { getPlanById } from "@/lib/plans";
-import type { PlanId } from "@/lib/plans";
 
 export function PlanBadge({
   plan,

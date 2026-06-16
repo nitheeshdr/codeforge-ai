@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
 import { Submission, Question } from "@/models";
-import { groq } from "@/services/ai/groq";
 
 export async function GET() {
   const { session, error } = await requireUser();
@@ -13,14 +12,14 @@ export async function GET() {
   const recentSubs = await Submission.find({
     user: session.user.id,
     kind: "dsa",
-    status: "accepted",
+    status: "Accepted",
   })
     .sort({ createdAt: -1 })
     .limit(20)
     .populate("question", "category difficulty")
     .lean();
 
-  const solvedIds = recentSubs.map((s) => s.question?._id).filter(Boolean);
+  const solvedIds = recentSubs.map((s) => s.question?._id).filter((id): id is NonNullable<typeof id> => !!id);
   const categoryCounts: Record<string, number> = {};
   for (const s of recentSubs) {
     const q = s.question as { category?: string } | null;

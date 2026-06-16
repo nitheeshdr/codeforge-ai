@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     .lean();
 
   const solvedCategories = [...new Set(
-    recentSubs.filter((s) => s.status === "accepted")
+    recentSubs.filter((s) => s.status === "Accepted")
       .map((s) => (s.question as { category?: string } | null)?.category)
       .filter(Boolean)
   )];

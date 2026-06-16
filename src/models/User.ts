@@ -20,6 +20,16 @@ export interface UserPreferences {
   defaultLanguage: string;
 }
 
+export interface UserOnboarding {
+  completed: boolean;
+  goal?: string;
+  level?: string;
+  topics: string[];
+  companies: string[];
+  dailyGoal: number;
+  completedAt?: Date;
+}
+
 export interface UserDoc {
   _id: Types.ObjectId;
   name: string;
@@ -37,6 +47,7 @@ export interface UserDoc {
   linkedinUrl?: string;
   stats: UserStats;
   preferences: UserPreferences;
+  onboarding: UserOnboarding;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -93,6 +104,15 @@ const userSchema = new Schema<UserDoc>(
       editorTheme: { type: String, default: "vs-dark" },
       vimMode: { type: Boolean, default: false },
       defaultLanguage: { type: String, default: "javascript" },
+    },
+    onboarding: {
+      completed: { type: Boolean, default: false },
+      goal: { type: String },
+      level: { type: String },
+      topics: { type: [String], default: [] },
+      companies: { type: [String], default: [] },
+      dailyGoal: { type: Number, default: 3 },
+      completedAt: { type: Date },
     },
   },
   { timestamps: true },

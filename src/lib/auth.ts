@@ -132,6 +132,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             token.username = dbUser.username;
             token.name = dbUser.name;
             token.picture = dbUser.image ?? token.picture;
+            token.onboardingComplete = dbUser.onboarding?.completed ?? false;
           }
         }
       }

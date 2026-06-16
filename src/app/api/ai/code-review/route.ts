@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const { error } = await requireUser();
   if (error) return error;
 
-  const { code, language, questionTitle, questionDescription } = await req.json();
+  const { code, language, questionTitle } = await req.json();
   if (!code?.trim()) {
     return NextResponse.json({ error: "Code is required" }, { status: 400 });
   }

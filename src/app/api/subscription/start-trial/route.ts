@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
 import { User } from "@/models";
-import { PLANS } from "@/lib/plans";
+import { PLANS, type PlanId } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   const { session, error } = await requireUser();
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Trial already used" }, { status: 409 });
   }
 
-  const trialDays = PLANS[plan].trialDays;
+  const trialDays = PLANS[plan as PlanId].trialDays;
   const trialEndsAt = new Date(Date.now() + trialDays * 24 * 60 * 60 * 1000);
 
   await User.findByIdAndUpdate(session.user.id, {

@@ -55,7 +55,7 @@ export function AnalyticsDashboard() {
   const totalAttempted = data?.analysis.reduce((s, a) => s + a.attempted, 0) ?? 0;
   const totalAccepted = data?.analysis.reduce((s, a) => s + a.accepted, 0) ?? 0;
   const overallRate = totalAttempted > 0 ? Math.round((totalAccepted / totalAttempted) * 100) : 0;
-  const topCategory = [...(data?.analysis ?? [])].sort((a, b) => b.rate - a.rate)[0];
+  // topCategory reserved for future use
   const masteredCount = data?.analysis.filter((a) => a.rate >= 80).length ?? 0;
 
   return (

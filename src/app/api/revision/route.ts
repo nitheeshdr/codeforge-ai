@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
-import { SpacedRepetition, Submission } from "@/models";
+import { SpacedRepetition } from "@/models";
 
 function sm2(quality: number, repetitions: number, easeFactor: number, interval: number) {
   let ef = easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));

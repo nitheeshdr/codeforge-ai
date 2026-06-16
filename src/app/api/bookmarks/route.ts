@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
-import { Bookmark, Question, FrontendChallenge } from "@/models";
+import { Bookmark } from "@/models";
 
 export async function GET(req: NextRequest) {
   const { session, error } = await requireUser();

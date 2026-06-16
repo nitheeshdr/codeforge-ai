@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
-import { Follow, User, Submission } from "@/models";
+import { Follow, Submission } from "@/models";
 
 export async function GET(req: NextRequest) {
   const { session, error } = await requireUser();
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest) {
 
   const feed = await Submission.find({
     user: { $in: followingIds },
-    status: "accepted",
+    status: "Accepted",
   })
     .sort({ createdAt: -1 })
     .limit(30)

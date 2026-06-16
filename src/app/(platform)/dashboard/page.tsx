@@ -1,9 +1,10 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowRight, Code2, Flame, Sparkles } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getDashboardData } from "@/services/stats";
 import { getDailyChallenge } from "@/services/contests";
 import { StatsOverview } from "@/features/dashboard/stats-overview";
@@ -15,25 +16,14 @@ export const metadata: Metadata = { title: "Dashboard" };
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) redirect("/login");
 
-  let data, daily;
-  try {
-    [data, daily] = await Promise.all([
-      getDashboardData(session.user.id),
-      getDailyChallenge().catch(() => null),
-    ]);
-  } catch {
-    [data, daily] = [null, null];
-  }
-  if (!data) redirect("/login");
-
-  const firstName = data.name.split(" ")[0];
+  const firstName = (session.user.name ?? "there").split(" ")[0];
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-      {/* greeting + quick actions */}
+      {/* greeting — renders immediately from JWT, no DB needed */}
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3 sm:mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
@@ -57,7 +47,28 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* daily challenge banner */}
+      {/* heavy data streams in — page shell is already visible */}
+      <Suspense fallback={<DashboardDataSkeleton />}>
+        <DashboardData userId={session.user.id} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function DashboardData({ userId }: { userId: string }) {
+  let data, daily;
+  try {
+    [data, daily] = await Promise.all([
+      getDashboardData(userId),
+      getDailyChallenge().catch(() => null),
+    ]);
+  } catch {
+    [data, daily] = [null, null];
+  }
+  if (!data) redirect("/login");
+
+  return (
+    <>
       {daily && (
         <Link href={`/problems/${daily.slug}`} className="group mb-5 block sm:mb-6">
           <div className="flex flex-wrap items-center gap-3 rounded-xl border-2 border-primary/30 bg-primary/5 px-4 py-3 transition-colors group-hover:border-primary/60">
@@ -77,6 +88,24 @@ export default async function DashboardPage() {
       )}
 
       <StatsOverview data={data} isOwner />
+    </>
+  );
+}
+
+function DashboardDataSkeleton() {
+  return (
+    <div className="animate-pulse space-y-5">
+      {/* daily challenge placeholder */}
+      <div className="h-16 rounded-xl bg-muted" />
+      {/* stats cards */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {[...Array(4)].map((_, i) => <div key={i} className="h-24 rounded-xl bg-muted" />)}
+      </div>
+      {/* heatmap + submissions */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="h-52 rounded-xl bg-muted" />
+        <div className="h-52 rounded-xl bg-muted" />
+      </div>
     </div>
   );
 }

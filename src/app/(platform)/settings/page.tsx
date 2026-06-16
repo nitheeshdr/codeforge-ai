@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
 import {
@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) redirect("/login");
 
   await connectDB();

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Braces, Palette } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getRoadmapView } from "@/services/roadmaps";
 import {
   Card,
@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Roadmaps" };
 export const dynamic = "force-dynamic";
 
 export default async function RoadmapsPage() {
-  const session = await auth();
+  const session = await getSession();
   const [dsa, frontend] = await Promise.all([
     getRoadmapView("dsa", session?.user?.id),
     getRoadmapView("frontend", session?.user?.id),

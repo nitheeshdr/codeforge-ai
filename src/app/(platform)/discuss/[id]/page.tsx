@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import { Discussion } from "@/models";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { DiscussionDetail } from "@/features/discussions/discussion-detail";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export default async function DiscussionPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [session] = await Promise.all([auth()]);
+  const [session] = await Promise.all([getSession()]);
 
   let discussion;
   try {

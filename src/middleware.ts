@@ -41,6 +41,15 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Redirect new users to onboarding (skip for API routes and onboarding itself)
+  if (
+    !session.user.onboardingComplete &&
+    !pathname.startsWith("/onboarding") &&
+    !pathname.startsWith("/api")
+  ) {
+    return NextResponse.redirect(new URL("/onboarding", req.url));
+  }
+
   const isAdminArea =
     pathname.startsWith("/admin") ||
     pathname.startsWith("/api/admin") ||

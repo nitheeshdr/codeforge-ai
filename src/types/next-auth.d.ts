@@ -6,6 +6,7 @@ declare module "next-auth" {
       id: string;
       role: "user" | "admin";
       username: string;
+      onboardingComplete: boolean;
     } & DefaultSession["user"];
   }
 }
@@ -15,5 +16,6 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: "user" | "admin";
     username?: string;
+    onboardingComplete?: boolean;
   }
 }

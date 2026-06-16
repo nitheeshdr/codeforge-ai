@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { AppSidebar, MobileBottomNav } from "@/components/layout/app-sidebar";
 import { Topbar } from "@/components/layout/topbar";
 
@@ -9,7 +9,7 @@ export default async function PlatformLayout({
 }: {
   children: ReactNode;
 }) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user) redirect("/login");
 
   return (

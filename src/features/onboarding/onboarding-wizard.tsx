@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -65,7 +64,7 @@ const DAILY_GOALS = [
   { value: 10, icon: Flame, label: "10+ / day", tag: "Intensive", desc: "All-in grind for fast results" },
 ];
 
-const TOTAL_STEPS = 8; // 0=welcome, 1=goal, 2=level, 3=topics, 4=companies, 5=daily, 6=plan, 7=done
+const TOTAL_STEPS = 7; // 0=welcome, 1=goal, 2=level, 3=topics, 4=companies, 5=daily, 6=plan
 
 /* ── animation ──────────────────────────────────────────────────── */
 
@@ -78,7 +77,6 @@ const variants = {
 /* ── component ──────────────────────────────────────────────────── */
 
 export function OnboardingWizard({ name }: { name: string }) {
-  const router = useRouter();
   const { update } = useSession();
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
@@ -123,10 +121,10 @@ export function OnboardingWizard({ name }: { name: string }) {
       }
 
       await update();
-      go(7);
+      // Hard reload ensures middleware reads the refreshed JWT cookie
+      window.location.href = "/dashboard";
     } catch {
       toast.error("Something went wrong. Please try again.");
-    } finally {
       setSubmitting(false);
     }
   }
@@ -215,16 +213,6 @@ export function OnboardingWizard({ name }: { name: string }) {
                 onBack={() => go(5)}
                 onFinish={finish}
                 submitting={submitting}
-              />
-            )}
-            {step === 7 && (
-              <StepDone
-                name={name}
-                goal={goal}
-                level={level}
-                topics={topics}
-                dailyGoal={dailyGoal}
-                onStart={() => router.push("/dashboard")}
               />
             )}
           </motion.div>
@@ -606,57 +594,6 @@ function StepPlan({
   );
 }
 
-function StepDone({
-  name,
-  goal,
-  level,
-  topics,
-  dailyGoal,
-  onStart,
-}: {
-  name: string;
-  goal: string;
-  level: string;
-  topics: string[];
-  dailyGoal: number;
-  onStart: () => void;
-}) {
-  const goalLabel = GOALS.find((g) => g.id === goal)?.label ?? goal;
-  const levelLabel = LEVELS.find((l) => l.id === level)?.label ?? level;
-
-  return (
-    <div className="flex flex-col items-center text-center gap-6">
-      {/* celebration ring */}
-      <div className="relative flex size-24 items-center justify-center">
-        <div className="absolute inset-0 rounded-full bg-primary/10 animate-ping" style={{ animationDuration: "2s" }} />
-        <div className="relative flex size-20 items-center justify-center rounded-full bg-primary shadow-[0_0_0_4px] shadow-primary/20">
-          <Check className="size-10 text-primary-foreground" strokeWidth={3} />
-        </div>
-      </div>
-
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">You&apos;re all set, {name.split(" ")[0]}!</h1>
-        <p className="mt-2 text-muted-foreground">Your personalised CodeForge AI experience is ready.</p>
-      </div>
-
-      {/* summary card */}
-      <div className="w-full rounded-xl border-2 border-border bg-muted/30 p-5 text-left space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your profile</p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <SummaryRow label="Goal" value={goalLabel} />
-          <SummaryRow label="Level" value={levelLabel} />
-          <SummaryRow label="Daily target" value={`${dailyGoal === 10 ? "10+" : dailyGoal} problems/day`} />
-          <SummaryRow label="Focus topics" value={topics.length > 3 ? `${topics.slice(0, 3).join(", ")} +${topics.length - 3}` : topics.join(", ")} />
-        </div>
-      </div>
-
-      <Button size="lg" className="px-10" onClick={onStart}>
-        Start Coding <ArrowRight className="size-4" />
-      </Button>
-    </div>
-  );
-}
-
 /* ── shared sub-components ──────────────────────────────────────── */
 
 function StepHeader({
@@ -714,11 +651,3 @@ function StepNav({
   );
 }
 
-function SummaryRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-sm font-semibold">{value}</span>
-    </div>
-  );
-}

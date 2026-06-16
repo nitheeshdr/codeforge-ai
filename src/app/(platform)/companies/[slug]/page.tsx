@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Building2, CheckCircle2, Circle, CircleDot } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getCompanyBySlug } from "@/services/companies";
 import { listQuestions } from "@/services/questions";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
@@ -30,7 +30,7 @@ export async function generateMetadata({
 
 export default async function CompanyPage({ params }: PageProps) {
   const { slug } = await params;
-  const [company, session] = await Promise.all([getCompanyBySlug(slug), auth()]);
+  const [company, session] = await Promise.all([getCompanyBySlug(slug), getSession()]);
   if (!company) notFound();
 
   const result = await listQuestions(

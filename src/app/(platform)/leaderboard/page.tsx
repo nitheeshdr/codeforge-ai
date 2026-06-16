@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Flame, Trophy } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getLeaderboard, getUserRank } from "@/services/stats";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ const MEDAL_COLORS = [
 ];
 
 export default async function LeaderboardPage() {
-  const session = await auth();
+  const session = await getSession();
   const [entries, myRank] = await Promise.all([
     getLeaderboard(50),
     session?.user?.id ? getUserRank(session.user.id) : Promise.resolve(0),

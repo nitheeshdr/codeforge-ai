@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getContestDetail } from "@/services/contests";
 import { ContestDetailView } from "@/features/contests/contest-detail";
 
@@ -20,7 +20,7 @@ export async function generateMetadata({
 
 export default async function ContestPage({ params }: PageProps) {
   const { slug } = await params;
-  const session = await auth();
+  const session = await getSession();
   const contest = await getContestDetail(slug, session?.user?.id);
   if (!contest) notFound();
 

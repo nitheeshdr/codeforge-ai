@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Building2 } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { listCompaniesWithProgress } from "@/services/companies";
 import {
   Card,
@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Company Prep" };
 export const dynamic = "force-dynamic";
 
 export default async function CompaniesPage() {
-  const session = await auth();
+  const session = await getSession();
   const companies = await listCompaniesWithProgress(session?.user?.id);
 
   return (

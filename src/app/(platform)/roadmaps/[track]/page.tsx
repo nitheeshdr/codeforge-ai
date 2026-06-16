@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2 } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { getRoadmapView } from "@/services/roadmaps";
 import { ROADMAP_TRACKS, type RoadmapTrack } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +31,7 @@ export default async function RoadmapDetailPage({ params }: PageProps) {
   const { track } = await params;
   if (!ROADMAP_TRACKS.includes(track as RoadmapTrack)) notFound();
 
-  const session = await auth();
+  const session = await getSession();
   const view = await getRoadmapView(track as RoadmapTrack, session?.user?.id);
   if (!view) notFound();
 

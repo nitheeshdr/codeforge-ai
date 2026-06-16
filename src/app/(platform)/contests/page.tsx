@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 import { CalendarClock, Flame, Trophy, Users } from "lucide-react";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 import { listContests, getDailyChallenge } from "@/services/contests";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ export const metadata: Metadata = { title: "Contests" };
 export const dynamic = "force-dynamic";
 
 export default async function ContestsPage() {
-  const session = await auth();
+  const session = await getSession();
   const [contests, daily] = await Promise.all([
     listContests(session?.user?.id),
     getDailyChallenge(),

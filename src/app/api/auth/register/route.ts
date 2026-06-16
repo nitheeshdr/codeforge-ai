@@ -4,6 +4,8 @@ import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
 import { registerSchema } from "@/schemas/auth";
 import { enforceRateLimit } from "@/lib/rate-limit";
+import { sendEmail } from "@/lib/mailer";
+import { welcomeEmailHtml, welcomeEmailSubject } from "@/lib/email-templates";
 
 export async function POST(req: NextRequest) {
   const limited = await enforceRateLimit("auth", req);
@@ -60,6 +62,17 @@ export async function POST(req: NextRequest) {
     providers: ["credentials"],
     role: admins.includes(email.toLowerCase()) ? "admin" : "user",
   });
+
+  // Send welcome email — fire-and-forget so registration is never blocked
+  const appUrl =
+    process.env.NEXTAUTH_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "http://localhost:3000";
+  sendEmail({
+    to: email.toLowerCase(),
+    subject: welcomeEmailSubject(name),
+    html: welcomeEmailHtml({ name, loginUrl: `${appUrl}/dashboard` }),
+  }).catch(() => {});
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }

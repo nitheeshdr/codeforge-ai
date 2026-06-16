@@ -19,6 +19,7 @@ export const authConfig = {
       if (token.id) session.user.id = token.id as string;
       session.user.role = (token.role as "user" | "admin") ?? "user";
       session.user.username = (token.username as string) ?? "";
+      session.user.onboardingComplete = (token.onboardingComplete as boolean) ?? false;
       return session;
     },
   },

@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Bookmark, Code2, Layout, Trash2, ExternalLink } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 interface BookmarkItem {
   _id: string;

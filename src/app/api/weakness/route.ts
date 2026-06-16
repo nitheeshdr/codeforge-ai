@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
-import { Submission, Question } from "@/models";
+import { Submission } from "@/models";
 
 const CATEGORIES = [
   "Array", "String", "Hash Table", "Linked List", "Stack", "Queue",
@@ -32,7 +32,7 @@ export async function GET() {
     const cat = q.category;
     if (!categoryStats[cat]) categoryStats[cat] = { attempted: 0, accepted: 0 };
     categoryStats[cat].attempted++;
-    if (sub.status === "accepted") categoryStats[cat].accepted++;
+    if (sub.status === "Accepted") categoryStats[cat].accepted++;
   }
 
   const analysis = Object.entries(categoryStats).map(([category, stats]) => ({

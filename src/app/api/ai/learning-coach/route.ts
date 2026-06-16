@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { complete } from "@/services/ai/groq";
 import { connectDB } from "@/lib/mongodb";
 import { Submission, User } from "@/models";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const { session, error } = await requireUser();
   if (error) return error;
 
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
     if (!q?.category) continue;
     if (!categoryMap[q.category]) categoryMap[q.category] = { attempted: 0, accepted: 0 };
     categoryMap[q.category].attempted++;
-    if (sub.status === "accepted") categoryMap[q.category].accepted++;
+    if (sub.status === "Accepted") categoryMap[q.category].accepted++;
   }
 
   const weakCategories = Object.entries(categoryMap)

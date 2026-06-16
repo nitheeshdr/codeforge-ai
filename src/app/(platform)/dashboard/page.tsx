@@ -18,10 +18,15 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const [data, daily] = await Promise.all([
-    getDashboardData(session.user.id),
-    getDailyChallenge().catch(() => null),
-  ]);
+  let data, daily;
+  try {
+    [data, daily] = await Promise.all([
+      getDashboardData(session.user.id),
+      getDailyChallenge().catch(() => null),
+    ]);
+  } catch {
+    [data, daily] = [null, null];
+  }
   if (!data) redirect("/login");
 
   const firstName = data.name.split(" ")[0];

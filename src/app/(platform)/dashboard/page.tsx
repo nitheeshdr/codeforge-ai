@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { ArrowRight, Code2, Flame, Sparkles } from "lucide-react";
 import { getSession } from "@/lib/session";
@@ -65,7 +66,18 @@ async function DashboardData({ userId }: { userId: string }) {
   } catch {
     [data, daily] = [null, null];
   }
-  if (!data) redirect("/login");
+
+  // redirect() can't be called inside a Suspense streaming boundary after
+  // the page shell has already been flushed — show a recoverable error instead
+  if (!data) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-3 py-20 text-center">
+        <RefreshCw className="size-8 text-muted-foreground/40" />
+        <p className="text-sm text-muted-foreground">Failed to load dashboard data.</p>
+        <a href="/dashboard" className="text-sm text-primary hover:underline">Refresh</a>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -54,7 +54,7 @@ export function WeaknessDashboard() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-base">
                 <Calendar className="size-4 text-primary" />
-                Today's Plan
+                Today&apos;s Plan
               </CardTitle>
               <Badge variant="outline" className="text-xs">{plan.totalMins} mins</Badge>
             </div>

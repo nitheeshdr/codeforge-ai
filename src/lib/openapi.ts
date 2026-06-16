@@ -14,15 +14,6 @@ const errorSchema = {
   properties: { error: { type: "string" } },
 } as const;
 
-const paginationSchema = {
-  type: "object",
-  properties: {
-    total: { type: "integer" },
-    page: { type: "integer" },
-    pages: { type: "integer" },
-  },
-} as const;
-
 const userRefSchema = {
   type: "object",
   properties: {
@@ -33,7 +24,6 @@ const userRefSchema = {
   },
 } as const;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const openApiSpec: Record<string, any> = {
   openapi: "3.0.3",
   info: {

@@ -19,6 +19,7 @@ const PUBLIC_PREFIXES = [
   "/terms",
   "/privacy",
   "/changelog",
+  "/feedback",
   "/_next",
   "/favicon",
 ];

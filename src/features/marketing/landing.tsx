@@ -132,7 +132,7 @@ const FOOTER_COLS = [
   { heading: "Platform", links: [{ label: "Problems", href: "/problems" }, { label: "Challenges", href: "/challenges" }, { label: "Contests", href: "/contests" }, { label: "Roadmaps", href: "/roadmaps" }, { label: "Leaderboard", href: "/leaderboard" }] },
   { heading: "AI Tools", links: [{ label: "Learning Coach", href: "/ai-tools" }, { label: "Pair Programmer", href: "/ai-tools" }, { label: "Study Planner", href: "/ai-tools" }, { label: "Resume Analyzer", href: "/ai-tools" }] },
   { heading: "Community", links: [{ label: "Forum", href: "/forum" }, { label: "Discussions", href: "/discuss" }, { label: "Notes", href: "/notes" }, { label: "Company Prep", href: "/companies" }] },
-  { heading: "Legal", links: [{ label: "Terms & Conditions", href: "/terms" }, { label: "Privacy Policy", href: "/privacy" }, { label: "Changelog", href: "/changelog" }] },
+  { heading: "Legal", links: [{ label: "Terms & Conditions", href: "/terms" }, { label: "Privacy Policy", href: "/privacy" }, { label: "Changelog", href: "/changelog" }, { label: "Feedback", href: "/feedback" }] },
 ];
 
 /* ── motion helpers ───────────────────────────────────────────────── */
@@ -1104,12 +1104,10 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
                 The AI-powered platform for mastering data structures, algorithms and frontend engineering — built for your next interview.
               </p>
               <div className="mt-6 flex gap-2">
-                {[{ label: "GitHub", icon: GithubIcon }, { label: "Twitter", icon: XIcon }, { label: "YouTube", icon: YoutubeIcon }].map(({ label, icon: Icon }) => (
-                  <a key={label} href="#" aria-label={label}
-                    className="flex size-9 items-center justify-center rounded-lg border lp-border lp-ink-4 hover:border-orange-500/40 hover:bg-orange-500/10 hover:text-orange-400 transition-all">
-                    <Icon className="size-4" />
-                  </a>
-                ))}
+                <a href="https://github.com/nitheeshdr/codeforge-ai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                  className="flex size-9 items-center justify-center rounded-lg border lp-border lp-ink-4 hover:border-orange-500/40 hover:bg-orange-500/10 hover:text-orange-400 transition-all">
+                  <GithubIcon className="size-4" />
+                </a>
               </div>
             </div>
             {FOOTER_COLS.map((col) => (
@@ -1133,6 +1131,7 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
               <Link href="/terms" className="hover:text-orange-400 transition-colors">Terms</Link>
               <Link href="/privacy" className="hover:text-orange-400 transition-colors">Privacy</Link>
               <Link href="/changelog" className="hover:text-orange-400 transition-colors">Changelog</Link>
+              <Link href="/feedback" className="hover:text-orange-400 transition-colors">Feedback</Link>
               <span className="rounded-full border lp-border-faint px-2 py-0.5 font-mono">v{APP_VERSION}</span>
             </div>
           </div>
@@ -1145,10 +1144,4 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
 /* ── SVG icons ────────────────────────────────────────────────────── */
 function GithubIcon({ className }: { className?: string }) {
   return <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.88-.01-1.73-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.34 1.12 2.91.86.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.7 0 0 .84-.28 2.75 1.05a9.36 9.36 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.4.2 2.44.1 2.7.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.04 10.04 0 0 0 22 12.25C22 6.58 17.52 2 12 2" /></svg>;
-}
-function XIcon({ className }: { className?: string }) {
-  return <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>;
-}
-function YoutubeIcon({ className }: { className?: string }) {
-  return <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12z" /></svg>;
 }

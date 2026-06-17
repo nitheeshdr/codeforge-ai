@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { APP_NAME, APP_VERSION } from "@/lib/constants";
+import { APP_NAME } from "@/lib/constants";
+import { InfoLayout } from "@/components/shared/info-layout";
 
 export const metadata = {
   title: `Changelog — ${APP_NAME}`,
@@ -82,23 +82,13 @@ const RELEASES = [
 
 export default function ChangelogPage() {
   return (
-    <div className="min-h-svh bg-background text-foreground">
-      <header className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-          <Link href="/" className="text-sm font-bold text-primary">
-            {APP_NAME}
-          </Link>
-          <span className="text-xs text-muted-foreground">v{APP_VERSION}</span>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-3xl px-4 py-16">
-        <div className="mb-12">
-          <h1 className="text-3xl font-black tracking-tight">Changelog</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Every release, every fix, every improvement — documented here.
-          </p>
-        </div>
+    <InfoLayout>
+      <div className="mb-12">
+        <h1 className="text-3xl font-black tracking-tight">Changelog</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Every release, every fix, every improvement — documented here.
+        </p>
+      </div>
 
         <div className="relative space-y-12">
           {/* Vertical timeline line */}
@@ -170,12 +160,6 @@ export default function ChangelogPage() {
           ))}
         </div>
 
-        <div className="mt-16 flex gap-4 text-sm text-muted-foreground">
-          <Link href="/terms" className="hover:text-primary transition-colors">Terms</Link>
-          <Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link>
-          <Link href="/" className="hover:text-primary transition-colors">Back to home</Link>
-        </div>
-      </main>
-    </div>
+    </InfoLayout>
   );
 }

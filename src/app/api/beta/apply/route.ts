@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
 import { sendEmail } from "@/lib/mailer";
 import { betaWelcomeEmailHtml, betaWelcomeEmailSubject } from "@/lib/email-templates";
-import { BETA_LIMIT } from "../join/route";
+import { BETA_LIMIT } from "@/lib/constants";
 
 // Called after Google OAuth on /beta/success to apply Go plan if slots available
 export async function POST() {

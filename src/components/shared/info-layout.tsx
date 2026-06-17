@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import { APP_NAME, APP_VERSION } from "@/lib/constants";
 
 export function InfoLayout({ children }: { children: React.ReactNode }) {
@@ -29,9 +30,15 @@ export function InfoLayout({ children }: { children: React.ReactNode }) {
       </main>
 
       <footer className="border-t">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} {APP_NAME}. Built by Setups Works.</p>
-          <div className="flex items-center gap-4">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-y-3 px-4 py-5 text-xs text-muted-foreground sm:grid-cols-3 sm:items-center">
+          <p>© {new Date().getFullYear()} {APP_NAME}</p>
+          <div className="flex items-center justify-center gap-1.5">
+            from the
+            <Heart className="size-3 fill-red-500 text-red-500" />
+            <img src="/white.png" alt="Setups Works" className="h-6 w-auto hidden dark:inline-block" />
+            <img src="/black.png" alt="Setups Works" className="h-6 w-auto inline-block dark:hidden" />
+          </div>
+          <div className="flex items-center gap-4 sm:justify-end">
             <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
             <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
             <Link href="/changelog" className="hover:text-foreground transition-colors">Changelog</Link>

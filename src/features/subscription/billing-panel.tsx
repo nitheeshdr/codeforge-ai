@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
-import { CreditCard, Crown, Zap, AlertTriangle } from "lucide-react";
+import { CreditCard, Crown, Zap, AlertTriangle, Clock, Sparkles } from "lucide-react";
+import Link from "next/link";
+
+const paymentsEnabled = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -118,15 +121,31 @@ export function BillingPanel({ billing }: { billing: BillingInfo }) {
           </div>
 
           {(isFree || isOnTrial) && (
-            <Button className="w-full" onClick={() => setShowUpgrade(true)}>
-              <Crown className="size-4" /> Upgrade to {isFree ? PLANS.go.name : "paid plan"}
-            </Button>
+            paymentsEnabled ? (
+              <Button className="w-full" onClick={() => setShowUpgrade(true)}>
+                <Crown className="size-4" /> Upgrade to {isFree ? PLANS.go.name : "paid plan"}
+              </Button>
+            ) : (
+              <div className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-3 space-y-2">
+                <p className="flex items-center gap-1.5 text-xs font-semibold text-orange-400">
+                  <Sparkles className="size-3.5" /> Paid plans coming soon
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Online payments aren&apos;t live yet. Join the beta to get Go Plan free for 30 days.
+                </p>
+                <Link href="/beta/join">
+                  <Button size="sm" variant="outline" className="w-full border-orange-500/40 text-orange-400 hover:bg-orange-500/10">
+                    Claim free beta spot →
+                  </Button>
+                </Link>
+              </div>
+            )
           )}
         </CardContent>
       </Card>
 
-      {/* upgrade section */}
-      {showUpgrade && (
+      {/* upgrade section — only shown when payments are live */}
+      {showUpgrade && paymentsEnabled && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">Choose a plan</h3>
@@ -141,7 +160,7 @@ export function BillingPanel({ billing }: { billing: BillingInfo }) {
       )}
 
       {/* invoice note */}
-      {!isFree && !isOnTrial && (
+      {!isFree && !isOnTrial && paymentsEnabled && (
         <p className="text-xs text-muted-foreground text-center">
           Payments processed securely via Razorpay. Contact support for invoice copies.
         </p>

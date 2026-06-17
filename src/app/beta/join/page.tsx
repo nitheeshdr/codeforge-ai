@@ -89,7 +89,6 @@ export default function BetaJoinPage() {
       if (!res.ok) { setError(data.error ?? "Something went wrong"); return; }
 
       setSuccess(true);
-      // Auto sign in and redirect
       const r = await signIn("credentials", {
         email: form.email,
         password: form.password,
@@ -130,8 +129,8 @@ export default function BetaJoinPage() {
     <div className="min-h-screen bg-background">
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-40 left-1/2 size-[700px] -translate-x-1/2 rounded-full bg-orange-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 right-0 size-[500px] rounded-full bg-purple-500/10 blur-[100px]" />
+        <div className="absolute -top-40 left-1/2 size-125 -translate-x-1/2 rounded-full bg-orange-500/10 blur-[120px] sm:size-175" />
+        <div className="absolute -bottom-40 right-0 size-75 rounded-full bg-purple-500/10 blur-[100px] sm:size-125" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -143,24 +142,25 @@ export default function BetaJoinPage() {
 
       <div className="relative z-10">
         {/* Nav */}
-        <header className="flex items-center justify-between px-6 py-5 sm:px-10">
+        <header className="flex items-center justify-between px-4 py-4 sm:px-8 sm:py-5">
           <Logo href="/" />
           <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Already have an account? <span className="text-primary font-semibold">Sign in</span>
+            <span className="hidden sm:inline">Already have an account? </span>
+            <span className="text-primary font-semibold">Sign in</span>
           </Link>
         </header>
 
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16">
 
             {/* ── Left: Hero copy ── */}
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-1.5 text-sm font-700 text-purple-400">
-                <Sparkles className="size-3.5" />
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-400 sm:mb-6 sm:px-4 sm:py-1.5 sm:text-sm">
+                <Sparkles className="size-3 sm:size-3.5" />
                 Beta · Limited to {BETA_LIMIT} users
               </div>
 
-              <h1 className="mb-5 text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl">
+              <h1 className="mb-4 text-4xl font-black leading-[0.95] tracking-tight sm:mb-5 sm:text-5xl lg:text-6xl">
                 Join the{" "}
                 <span className="bg-gradient-to-r from-orange-500 via-amber-400 to-purple-500 bg-clip-text text-transparent">
                   Beta.
@@ -170,13 +170,13 @@ export default function BetaJoinPage() {
                 <span className="text-foreground">Free.</span>
               </h1>
 
-              <p className="mb-8 text-lg text-muted-foreground leading-relaxed">
+              <p className="mb-6 text-base leading-relaxed text-muted-foreground sm:mb-8 sm:text-lg">
                 The first <strong className="text-foreground">50 users</strong> who join {APP_NAME} beta get the{" "}
                 <strong className="text-foreground">Go Plan free for one month</strong> — AI tools, contests, and everything else, zero cost.
               </p>
 
               {/* Spot counter */}
-              <div className="mb-8 rounded-2xl border border-border bg-card/50 p-5 backdrop-blur-sm">
+              <div className="mb-6 rounded-2xl border border-border bg-card/50 p-4 backdrop-blur-sm sm:mb-8 sm:p-5">
                 <div className="mb-3 flex items-center justify-between text-sm">
                   <span className="font-semibold text-foreground">Beta spots claimed</span>
                   <span className="font-black text-primary">
@@ -199,14 +199,14 @@ export default function BetaJoinPage() {
               </div>
 
               {/* Perks */}
-              <ul className="space-y-3">
+              <ul className="space-y-2.5 sm:space-y-3">
                 {PERKS.map(({ icon: Icon, color, bg, label, sub }) => (
-                  <li key={label} className={cn("flex items-center gap-4 rounded-xl border p-3.5", bg)}>
-                    <div className={cn("flex size-9 shrink-0 items-center justify-center rounded-lg bg-background/60", bg.split(" ")[0])}>
+                  <li key={label} className={cn("flex items-center gap-3 rounded-xl border p-3 sm:gap-4 sm:p-3.5", bg)}>
+                    <div className={cn("flex size-8 shrink-0 items-center justify-center rounded-lg bg-background/60 sm:size-9", bg.split(" ")[0])}>
                       <Icon className={cn("size-4", color)} />
                     </div>
-                    <div>
-                      <div className="text-sm font-700 text-foreground">{label}</div>
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-foreground">{label}</div>
                       <div className="text-xs text-muted-foreground">{sub}</div>
                     </div>
                     <CheckCircle2 className={cn("ml-auto size-4 shrink-0", color)} />
@@ -216,9 +216,9 @@ export default function BetaJoinPage() {
             </div>
 
             {/* ── Right: Join form ── */}
-            <div className="rounded-3xl border border-border bg-card/60 p-8 shadow-2xl backdrop-blur-sm sm:p-10">
-              <div className="mb-7 text-center">
-                <h2 className="text-2xl font-black tracking-tight">Create your account</h2>
+            <div className="rounded-2xl border border-border bg-card/60 p-5 shadow-2xl backdrop-blur-sm sm:rounded-3xl sm:p-8 lg:p-10">
+              <div className="mb-5 text-center sm:mb-7">
+                <h2 className="text-xl font-black tracking-tight sm:text-2xl">Create your account</h2>
                 <p className="mt-1.5 text-sm text-muted-foreground">
                   {full ? "Beta is full — join the waitlist below" : "Secure your beta spot in seconds"}
                 </p>
@@ -228,7 +228,7 @@ export default function BetaJoinPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="mb-5 w-full gap-3 py-5 text-sm font-semibold"
+                className="mb-4 w-full gap-3 py-5 text-sm font-semibold sm:mb-5"
                 onClick={handleGoogle}
                 disabled={googleLoading || full}
               >
@@ -237,7 +237,7 @@ export default function BetaJoinPage() {
               </Button>
 
               {/* Divider */}
-              <div className="relative mb-5">
+              <div className="relative mb-4 sm:mb-5">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-border" />
                 </div>
@@ -246,8 +246,8 @@ export default function BetaJoinPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid gap-4 sm:grid-cols-2">
+              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full name</Label>
                     <div className="relative">

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Check, X, Zap } from "lucide-react";
+import { Check, Clock, X, Zap } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PLANS, formatPrice, yearlyDiscount } from "@/lib/plans";
@@ -15,6 +16,8 @@ declare global {
     Razorpay: new (opts: Record<string, unknown>) => { open(): void };
   }
 }
+
+const paymentsEnabled = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
 function loadRazorpay(): Promise<boolean> {
   return new Promise((resolve) => {
@@ -175,6 +178,11 @@ export function PricingCards({
                       Current plan
                     </span>
                   )}
+                  {!isFree && !paymentsEnabled && !isCurrentPlan && (
+                    <span className="rounded-full border border-orange-500/30 bg-orange-500/10 px-2 py-0.5 text-[10px] font-semibold text-orange-500">
+                      Coming soon
+                    </span>
+                  )}
                 </div>
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 <p className="text-xs text-muted-foreground">{plan.tagline}</p>
@@ -217,6 +225,19 @@ export function PricingCards({
                 <Button variant="outline" className="w-full" disabled>
                   Current plan
                 </Button>
+              ) : !paymentsEnabled ? (
+                <div className="space-y-2">
+                  <Button className="w-full gap-2" disabled variant="outline">
+                    <Clock className="size-4" /> Payments coming soon
+                  </Button>
+                  {plan.id === "go" && (
+                    <Link href="/beta/join" className="block">
+                      <Button className="w-full gap-1.5 border-orange-500/40 bg-orange-500/10 text-orange-400 hover:bg-orange-500/20" variant="outline">
+                        Get Go free via Beta →
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               ) : (
                 <div className="space-y-2">
                   {plan.trialDays > 0 && (

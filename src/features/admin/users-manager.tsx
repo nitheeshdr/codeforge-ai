@@ -5,12 +5,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import {
+  CalendarDays,
   Crown,
   Flame,
   Loader2,
   Search,
   Shield,
-  ShieldOff,
   Sparkles,
   Trophy,
   UserCheck,
@@ -44,7 +44,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 interface AdminUser {
@@ -71,9 +70,9 @@ interface AdminUser {
 }
 
 const PLAN_META = {
-  free:  { label: "Free",  color: "text-muted-foreground", bg: "bg-muted/50 border-border",              icon: null },
-  go:    { label: "Go",    color: "text-orange-400",       bg: "bg-orange-500/10 border-orange-500/30",  icon: Zap },
-  plus:  { label: "Plus",  color: "text-yellow-400",       bg: "bg-yellow-500/10 border-yellow-500/30",  icon: Crown },
+  free: { label: "Free", color: "text-muted-foreground", bg: "bg-muted/50 border-border", icon: null },
+  go:   { label: "Go",   color: "text-orange-400",      bg: "bg-orange-500/10 border-orange-500/30", icon: Zap },
+  plus: { label: "Plus", color: "text-yellow-400",      bg: "bg-yellow-500/10 border-yellow-500/30", icon: Crown },
 } as const;
 
 function PlanBadge({ plan, betaUser }: { plan: string; betaUser: boolean }) {
@@ -119,11 +118,30 @@ function SubscriptionStatus({ user }: { user: AdminUser }) {
   return null;
 }
 
-function StatPill({ label, value, className }: { label: string; value: string | number; className?: string }) {
+/* ── Shared layout helpers ── */
+function SectionHeading({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className={cn("rounded-lg border bg-muted/30 p-2.5 text-center", className)}>
-      <p className="text-base font-bold">{value}</p>
-      <p className="text-[10px] text-muted-foreground mt-0.5">{label}</p>
+    <div className="flex items-center gap-2 pb-2">
+      <Icon className="size-3.5 text-muted-foreground" />
+      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{children}</span>
+    </div>
+  );
+}
+
+function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-2 border-b border-border/50 last:border-0">
+      <span className="text-xs text-muted-foreground shrink-0">{label}</span>
+      <span className="text-xs font-medium text-right">{children}</span>
+    </div>
+  );
+}
+
+function StatCard({ label, value, accent }: { label: string; value: string | number; accent?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl border bg-muted/20 py-3 px-2 gap-0.5">
+      <span className={cn("text-lg font-black tabular-nums leading-none", accent ?? "text-foreground")}>{value}</span>
+      <span className="text-[10px] text-muted-foreground mt-1">{label}</span>
     </div>
   );
 }
@@ -141,8 +159,11 @@ function UserDetailSheet({
 }) {
   const now = Date.now();
   const isOnTrial = !!user.trialEndsAt && new Date(user.trialEndsAt).getTime() > now;
+  const isExpired = !!user.planExpiresAt && new Date(user.planExpiresAt).getTime() < now && user.plan !== "free";
   const planExpiry = user.planExpiresAt ? new Date(user.planExpiresAt) : null;
   const trialExpiry = user.trialEndsAt ? new Date(user.trialEndsAt) : null;
+  const meta = PLAN_META[user.plan] ?? PLAN_META.free;
+  const PlanIcon = meta.icon;
 
   function grantGoPlan30Days() {
     const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -155,195 +176,238 @@ function UserDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-md" side="right">
-        <SheetHeader className="mb-4">
-          <SheetTitle className="text-base">User Details</SheetTitle>
-        </SheetHeader>
+      <SheetContent className="flex w-full flex-col overflow-y-auto p-0 sm:max-w-[420px]" side="right">
 
-        {/* Profile */}
-        <div className="mb-5 flex items-center gap-3">
-          <Avatar className="size-14 shrink-0">
-            <AvatarImage src={user.image ?? undefined} alt={user.name} />
-            <AvatarFallback className="text-sm font-bold">
-              {user.name.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="truncate font-bold">{user.name}</p>
-            <p className="truncate text-xs text-muted-foreground">@{user.username}</p>
-            <p className="truncate text-xs text-muted-foreground">{user.email}</p>
-          </div>
-        </div>
+        {/* ── Header ── */}
+        <div className="border-b bg-muted/20 px-5 py-5">
+          <SheetHeader className="mb-4 text-left">
+            <SheetTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              User Details
+            </SheetTitle>
+          </SheetHeader>
 
-        <div className="mb-5 flex flex-wrap gap-1.5">
-          {user.providers.map((p) => (
-            <Badge key={p} variant="outline" className="text-[10px]">{p}</Badge>
-          ))}
-          <Badge variant={user.role === "admin" ? "default" : "outline"} className="text-[10px]">
-            {user.role}
-          </Badge>
-          {user.banned && <Badge variant="destructive" className="text-[10px]">Banned</Badge>}
-          <span className="text-xs text-muted-foreground self-center">
-            Joined {format(new Date(user.createdAt), "MMM d, yyyy")}
-          </span>
-        </div>
-
-        <Separator className="mb-5" />
-
-        {/* Subscription */}
-        <section className="mb-5 space-y-3">
-          <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-            <Crown className="size-3.5 text-muted-foreground" /> Subscription
-          </h3>
-
-          <div className="rounded-xl border bg-card p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <PlanBadge plan={user.plan} betaUser={user.betaUser} />
-              {user.billingCycle && (
-                <span className="text-xs text-muted-foreground capitalize">{user.billingCycle}</span>
-              )}
+          <div className="flex items-center gap-4">
+            <Avatar className="size-16 shrink-0 ring-2 ring-border">
+              <AvatarImage src={user.image ?? undefined} alt={user.name} />
+              <AvatarFallback className="text-base font-black">
+                {user.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-base font-bold leading-tight">{user.name}</p>
+              <p className="truncate text-sm text-muted-foreground">@{user.username}</p>
+              <p className="truncate text-xs text-muted-foreground mt-0.5">{user.email}</p>
             </div>
+          </div>
 
-            {planExpiry && (
-              <div className="text-xs text-muted-foreground">
-                {user.billingCycle ? "Renews" : "Expires"}{" "}
-                <span className="font-medium text-foreground">
-                  {format(planExpiry, "MMM d, yyyy")}
-                </span>
-                {" · "}
-                {formatDistanceToNow(planExpiry, { addSuffix: true })}
-              </div>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {user.providers.map((p) => (
+              <Badge key={p} variant="outline" className="text-[10px] capitalize">{p}</Badge>
+            ))}
+            <Badge
+              variant={user.role === "admin" ? "default" : "secondary"}
+              className="text-[10px] capitalize"
+            >
+              {user.role}
+            </Badge>
+            {user.banned && (
+              <Badge variant="destructive" className="text-[10px]">Banned</Badge>
             )}
-
-            {isOnTrial && trialExpiry && (
-              <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs">
-                <span className="font-semibold text-primary">On trial</span>
-                <span className="text-muted-foreground"> · expires {format(trialExpiry, "MMM d, yyyy")}</span>
-              </div>
-            )}
-
             {user.betaUser && (
-              <div className="flex items-center gap-1.5 text-xs text-purple-400">
-                <Sparkles className="size-3" /> Beta user
-              </div>
+              <span className="inline-flex items-center gap-0.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-purple-400">
+                <Sparkles className="size-2.5" /> Beta
+              </span>
             )}
           </div>
 
-          {/* Plan controls */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Change plan</Label>
-            </div>
-            <Select value={user.plan} onValueChange={(plan) => onPatch({ plan })}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="go">Go</SelectItem>
-                <SelectItem value="plus">Plus</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 text-xs border-orange-500/40 text-orange-400 hover:bg-orange-500/10"
-                onClick={grantGoPlan30Days}
-              >
-                <Zap className="size-3 mr-1" /> Grant Go · 30d
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 text-xs"
-                onClick={revokePlan}
-                disabled={user.plan === "free"}
-              >
-                Revoke plan
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between rounded-lg border px-3 py-2">
-              <span className="text-xs font-medium">Beta user</span>
-              <Switch
-                checked={user.betaUser}
-                onCheckedChange={(betaUser) => onPatch({ betaUser })}
-              />
-            </div>
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CalendarDays className="size-3.5" />
+            Joined {format(new Date(user.createdAt), "MMMM d, yyyy")}
           </div>
-        </section>
+        </div>
 
-        <Separator className="mb-5" />
+        <div className="flex-1 space-y-0 divide-y divide-border/60">
 
-        {/* Stats */}
-        <section className="mb-5 space-y-3">
-          <h3 className="flex items-center gap-1.5 text-sm font-semibold">
-            <Trophy className="size-3.5 text-muted-foreground" /> Stats
-          </h3>
+          {/* ── Subscription ── */}
+          <section className="px-5 py-5 space-y-4">
+            <SectionHeading icon={Crown}>Subscription</SectionHeading>
 
-          <div className="grid grid-cols-3 gap-2">
-            <StatPill label="XP" value={user.xp.toLocaleString()} />
-            <StatPill label="Level" value={user.level} />
-            <StatPill label="Solved" value={user.solved} />
-          </div>
-
-          <div className="grid grid-cols-3 gap-2">
-            <StatPill label="Easy" value={user.solvedBreakdown.easy} className="border-green-500/20 text-green-400" />
-            <StatPill label="Medium" value={user.solvedBreakdown.medium} className="border-yellow-500/20 text-yellow-400" />
-            <StatPill label="Hard" value={user.solvedBreakdown.hard} className="border-red-500/20 text-red-400" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2.5">
-              <Flame className="size-4 text-orange-500 shrink-0" />
-              <div>
-                <p className="text-sm font-bold">{user.streak}</p>
-                <p className="text-[10px] text-muted-foreground">Current streak</p>
+            {/* Plan status card */}
+            <div className={cn("flex items-center justify-between rounded-xl border px-4 py-3.5", meta.bg)}>
+              <div className="flex items-center gap-2.5">
+                <div className={cn("flex size-9 items-center justify-center rounded-lg border", meta.bg)}>
+                  {PlanIcon
+                    ? <PlanIcon className={cn("size-4", meta.color)} />
+                    : <span className={cn("text-xs font-black", meta.color)}>F</span>
+                  }
+                </div>
+                <div>
+                  <p className={cn("text-sm font-bold", meta.color)}>{meta.label} Plan</p>
+                  <p className="text-xs text-muted-foreground">
+                    {user.billingCycle ? `Billed ${user.billingCycle}` : user.betaUser && user.plan !== "free" ? "Beta access" : "No billing"}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                {isExpired && (
+                  <span className="inline-flex items-center rounded-full bg-destructive/10 border border-destructive/30 px-2 py-0.5 text-[10px] font-bold text-destructive">Expired</span>
+                )}
+                {isOnTrial && (
+                  <span className="inline-flex items-center rounded-full bg-primary/10 border border-primary/30 px-2 py-0.5 text-[10px] font-bold text-primary">Trial</span>
+                )}
+                {!isExpired && !isOnTrial && user.plan !== "free" && (
+                  <span className="inline-flex items-center rounded-full bg-green-500/10 border border-green-500/30 px-2 py-0.5 text-[10px] font-bold text-green-400">Active</span>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2.5">
-              <Flame className="size-4 text-muted-foreground shrink-0" />
-              <div>
-                <p className="text-sm font-bold">{user.longestStreak}</p>
-                <p className="text-[10px] text-muted-foreground">Longest streak</p>
+
+            {/* Key-value rows */}
+            <div className="rounded-xl border divide-y divide-border/50 overflow-hidden">
+              {planExpiry && (
+                <InfoRow label={user.billingCycle ? "Renews" : "Expires"}>
+                  <span className="flex flex-col items-end gap-0.5">
+                    <span>{format(planExpiry, "MMM d, yyyy")}</span>
+                    <span className="text-[10px] font-normal text-muted-foreground">
+                      {formatDistanceToNow(planExpiry, { addSuffix: true })}
+                    </span>
+                  </span>
+                </InfoRow>
+              )}
+              {isOnTrial && trialExpiry && (
+                <InfoRow label="Trial ends">
+                  {format(trialExpiry, "MMM d, yyyy")}
+                </InfoRow>
+              )}
+              <InfoRow label="Beta user">
+                <Switch
+                  checked={user.betaUser}
+                  onCheckedChange={(betaUser) => onPatch({ betaUser })}
+                />
+              </InfoRow>
+            </div>
+
+            {/* Plan actions */}
+            <div className="space-y-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Change plan</p>
+              <Select value={user.plan} onValueChange={(plan) => onPatch({ plan })}>
+                <SelectTrigger className="h-9 w-full text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="free">Free</SelectItem>
+                  <SelectItem value="go">Go</SelectItem>
+                  <SelectItem value="plus">Plus</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 w-full gap-1.5 border-orange-500/40 text-orange-400 hover:bg-orange-500/10 text-xs font-semibold"
+                  onClick={grantGoPlan30Days}
+                >
+                  <Zap className="size-3.5" /> Grant Go · 30d
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 w-full text-xs font-semibold"
+                  onClick={revokePlan}
+                  disabled={user.plan === "free"}
+                >
+                  Revoke plan
+                </Button>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <Separator className="mb-5" />
+          {/* ── Stats ── */}
+          <section className="px-5 py-5 space-y-4">
+            <SectionHeading icon={Trophy}>Stats</SectionHeading>
 
-        {/* Account actions */}
-        <section className="space-y-2">
-          <h3 className="flex items-center gap-1.5 text-sm font-semibold mb-3">
-            <Shield className="size-3.5 text-muted-foreground" /> Account
-          </h3>
+            <div className="grid grid-cols-3 gap-2">
+              <StatCard label="XP" value={user.xp >= 1000 ? `${(user.xp / 1000).toFixed(1)}k` : user.xp} />
+              <StatCard label="Level" value={user.level} />
+              <StatCard label="Solved" value={user.solved} />
+            </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            <Select value={user.role} onValueChange={(role) => onPatch({ role })}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-              </SelectContent>
-            </Select>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Solved breakdown</p>
+              <div className="grid grid-cols-3 gap-2">
+                <StatCard label="Easy" value={user.solvedBreakdown.easy} accent="text-green-400" />
+                <StatCard label="Medium" value={user.solvedBreakdown.medium} accent="text-yellow-400" />
+                <StatCard label="Hard" value={user.solvedBreakdown.hard} accent="text-red-400" />
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Streak</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-3 rounded-xl border bg-muted/20 px-3.5 py-3">
+                  <Flame className="size-5 text-orange-500 shrink-0" />
+                  <div>
+                    <p className="text-lg font-black leading-none">{user.streak}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Current</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border bg-muted/20 px-3.5 py-3">
+                  <Flame className="size-5 text-muted-foreground/50 shrink-0" />
+                  <div>
+                    <p className="text-lg font-black leading-none">{user.longestStreak}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Longest</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── Account ── */}
+          <section className="px-5 py-5 space-y-4">
+            <SectionHeading icon={Shield}>Account</SectionHeading>
+
+            <div className="rounded-xl border divide-y divide-border/50 overflow-hidden">
+              <InfoRow label="User ID">
+                <span className="font-mono text-[10px] text-muted-foreground">{user.id.slice(-8)}</span>
+              </InfoRow>
+              <InfoRow label="Providers">
+                <div className="flex gap-1 flex-wrap justify-end">
+                  {user.providers.map((p) => (
+                    <Badge key={p} variant="outline" className="text-[10px] capitalize">{p}</Badge>
+                  ))}
+                </div>
+              </InfoRow>
+              <InfoRow label="Joined">
+                {format(new Date(user.createdAt), "MMM d, yyyy")}
+              </InfoRow>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Role</p>
+              <Select value={user.role} onValueChange={(role) => onPatch({ role })}>
+                <SelectTrigger className="h-9 w-full text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <Button
-              size="sm"
               variant={user.banned ? "outline" : "destructive"}
-              className="h-8 text-xs gap-1.5"
+              className="w-full h-9 gap-2 text-sm font-semibold"
               onClick={() => onPatch({ banned: !user.banned })}
             >
               {user.banned
-                ? <><UserCheck className="size-3" /> Unban</>
-                : <><UserX className="size-3" /> Ban</>}
+                ? <><UserCheck className="size-4" /> Unban User</>
+                : <><UserX className="size-4" /> Ban User</>
+              }
             </Button>
-          </div>
-        </section>
+          </section>
+
+        </div>
       </SheetContent>
     </Sheet>
   );
@@ -388,7 +452,6 @@ export function UsersManager() {
 
   function patch(id: string, p: Record<string, unknown>) {
     patchUser.mutate({ id, patch: p });
-    // Optimistically update selected user in drawer
     if (selected?.id === id) {
       setSelected((prev) => prev ? { ...prev, ...p } as AdminUser : prev);
     }
@@ -522,7 +585,7 @@ export function UsersManager() {
                   <TableCell>
                     <Select
                       value={user.role}
-                      onValueChange={(role) => { patch(user.id, { role }); }}
+                      onValueChange={(role) => patch(user.id, { role })}
                     >
                       <SelectTrigger size="sm" className="w-24" onClick={(e) => e.stopPropagation()}>
                         <SelectValue />

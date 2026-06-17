@@ -1,25 +1,43 @@
+<div align="center">
+
+<img src="src/app/icon.svg" alt="CodeForge AI" width="88" height="88">
+
 # CodeForge AI
 
-[![Next.js Version](https://img.shields.io/badge/Next.js-15.0-black?style=for-the-badge&logo=nextdotjs)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-38bdf8?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47a248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
-[![Redis](https://img.shields.io/badge/Redis-Upstash-red?style=for-the-badge&logo=redis)](https://upstash.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+### Your AI-powered coding interview prep workspace
 
-An ultra-modern, production-grade, AI-powered coding interview preparation platform. CodeForge AI bundles LeetCode-style DSA problems, Frontend Mentor-style UI challenges, scheduled contests, personalized learning roadmaps, local mock interviews, and a real-time streaming AI Mentor into a single, cohesive developer workspace.
+LeetCode-style DSA problems · Frontend sandbox challenges · Live contests · Personalized roadmaps · Spaced-repetition revision · A community forum · Local mock interviews · A real-time streaming **AI Mentor** — all in one cohesive developer workspace.
+
+<br/>
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.5-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-149ECA?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Redis](https://img.shields.io/badge/Redis-Upstash-DC382D?style=flat-square&logo=redis)](https://upstash.com/)
+[![Groq](https://img.shields.io/badge/AI-Groq_Llama_3-F55036?style=flat-square&logo=meta)](https://groq.com/)
+[![License](https://img.shields.io/badge/License-MIT-EAB308?style=flat-square)](https://opensource.org/licenses/MIT)
+
+<a href="#-getting-started"><b>Getting Started</b></a> ·
+<a href="#-core-features"><b>Features</b></a> ·
+<a href="#-tech-stack"><b>Tech Stack</b></a> ·
+<a href="#-changelog"><b>Changelog</b></a> ·
+<a href="#-deployment"><b>Deployment</b></a>
+
+</div>
 
 ---
 
-## System Architecture
+## 🏗 System Architecture
 
-CodeForge AI uses a decoupled, event-resilient architecture built on top of **Next.js 15 (App Router)**. Below is a high-level representation of how components, caching layers, execution runtimes, and AI models interact:
+CodeForge AI uses a decoupled, event-resilient architecture built on **Next.js 15 (App Router)**. Below is how the client workspace, caching layers, execution runtimes, AI models, and billing interact:
 
 ```mermaid
 graph TD
     User([User Browser]) -->|HTTPS / WSS| FE[Next.js Client]
 
-    subgraph ClientWorkspace ["Client Workspace"]
+    subgraph ClientWorkspace ["🖥 Client Workspace"]
         FE --> Editor["Monaco Editor (DSA)"]
         FE --> Sandbox["Sandpack Preview (Frontend)"]
         FE --> AIChat["AI Mentor Panel"]
@@ -27,190 +45,303 @@ graph TD
 
     FE -->|Server Actions / Route Handlers| API[Next.js Server / Middleware]
 
-    subgraph Storage ["Storage & Cache Layers"]
+    subgraph Storage ["💾 Storage & Cache"]
         API --> DB[("MongoDB + Mongoose")]
-        API --> Redis[("Upstash Redis Cache")]
+        API --> Redis[("Upstash Redis")]
     end
 
-    subgraph Execution ["Code Execution Engines"]
-        API --> Paiza["Paiza.io API (Default/Free)"]
+    subgraph Execution ["⚙️ Code Execution"]
+        API --> Paiza["Paiza.io (Default/Free)"]
         API --> Judge0["Judge0 CE (RapidAPI)"]
         API --> Piston["Piston (Self-hosted)"]
     end
 
-    subgraph AI ["AI Services"]
-        API --> Groq["Groq AI (Llama 3 Stream)"]
+    subgraph AI ["🤖 AI Services"]
+        API --> Groq["Groq (Llama 3 Stream)"]
+    end
+
+    subgraph Payments ["💳 Billing"]
+        API --> Razorpay["Razorpay Subscriptions"]
     end
 ```
 
 ---
 
-## Core Features
+## ✨ Core Features
 
-### Hybrid Coding Workspaces
-* **DSA Code Workspace**: Integrated Monaco Editor featuring customizable themes, font size controls, Vim keybindings, Emmet expansion, fullscreen toggle, and split-pane output layout. Code drafts are auto-saved locally and synced with MongoDB.
-* **Frontend UI Sandbox**: In-browser Sandpack playground supporting HTML/CSS, Vanilla JS, React, and Tailwind CSS. Features live hot-reloading previews, a custom console emulator, and automated AI visual reviews.
-* **12 Supported DSA Languages**: Run and submit code in JavaScript, TypeScript, Python, Java, C, C++, C#, Go, PHP, Rust, Kotlin, and Swift.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-### Live AI Mentor (Powered by Groq)
-* **Context-Aware Assistance**: The AI mentor understands the exact problem description, code buffer, and runtime output.
-* **Progressive Hint System**: Avoids spoiling solutions by dispensing hints step-by-step (e.g., conceptual hints $\rightarrow$ algorithmic logic $\rightarrow$ edge case considerations $\rightarrow$ code optimization).
-* **Code Explainer & Visualizer**: Ask "Why is my solution failing?" or request a space/time complexity breakdown. All AI feedback streams in real-time.
+### 🧑‍💻 Hybrid Coding Workspaces
+- **DSA Workspace** — Monaco editor with themes, font controls, **Vim** keybindings, Emmet, fullscreen, split-pane output, and auto-save (local + MongoDB).
+- **Frontend Sandbox** — In-browser Sandpack for HTML/CSS, Vanilla JS, React & Tailwind with live hot-reload and a console emulator.
+- **12 Languages** — JS, TS, Python, Java, C, C++, C#, Go, PHP, Rust, Kotlin, Swift.
+- **Pluggable Engines** — Paiza, Judge0, or self-hosted Piston.
 
-### Gamification & Streaks
-* **GitHub-Style Heatmap**: Visualizes code submission frequency and daily consistency.
-* **XP & leveling system**: Earn experience points for correct submissions, fast runs, and completed frontend projects.
-* **Unlockable Badges**: Earn milestones based on problem categories, streak lengths, and contest placements.
+</td>
+<td width="50%" valign="top">
 
-### Live Contests & Leaderboards
-* **Time Penalty System**: Built-in score calculation based on completion times and incorrect attempt penalties.
-* **Real-time Standings**: Leaderboards computed on-demand using MongoDB aggregate frameworks, cached globally using Upstash Redis.
-* **Daily Rotating Challenge**: A community-wide daily question with double XP rewards.
+### 🤖 Live AI Mentor (Groq)
+- **Context-Aware** — Understands the problem, your code buffer, and runtime output.
+- **Progressive Hints** — Concept → algorithm → edge cases → optimization, never spoiling the answer.
+- **Explain & Visualize** — "Why is this failing?" and time/space complexity, all streamed in real time.
 
-### Mock Interviews
-* **Simulated Sessions**: Set up a custom question queue under strict timers.
-* **Local Screen Recording**: Record voice, video, and workspace inputs locally in-browser.
-* **AI Feedback Performance Report**: Generates a breakdown of code cleanliness, debugging speed, and structural approach.
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🛠 AI Tools Suite (`/ai-tools`)
+- **Learning Coach** — guidance tuned to your weak areas
+- **Pair Programmer** — conversational coding help
+- **Study Planner** — structured plans toward a date
+- **Complexity Analyzer** — Big-O breakdowns
+- **Code Review** — correctness, style & edge cases
+- **Roadmap / Contest / Resume** generators
+- **Project Review** — AI review of sandbox projects
+
+</td>
+<td width="50%" valign="top">
+
+### 📚 Problems, Tracks & Roadmaps
+- **Problem Bank** — filter by difficulty, tag & company.
+- **Tracks & Roadmaps** — ordered, guided learning paths.
+- **Company Prep** — Google, Meta, Amazon, Microsoft, Netflix, Uber & more.
+- **Daily Plan** — a personalized daily study queue.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🔁 Revision & Memory
+- **Spaced Repetition (SM-2)** — concepts resurface on an optimal schedule.
+- **Revision Queue** — review due items in one flow.
+- **Notes & Bookmarks** — per-problem notes and saved questions.
+
+</td>
+<td width="50%" valign="top">
+
+### 📈 Analytics & Weakness Detection
+- **Weakness Detection** — surfaces topics you struggle with most.
+- **Personal Analytics** — progress charts, submission trends & accuracy (Recharts).
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🔥 Gamification & Streaks
+- **GitHub-style Heatmap** of daily activity.
+- **XP & Levels** for correct, fast submissions.
+- **Unlockable Badges** by category, streak & placement.
+
+</td>
+<td width="50%" valign="top">
+
+### 🏆 Contests & Leaderboards
+- **Time-Penalty Scoring** on completion time & wrong attempts.
+- **Real-time Standings** via MongoDB aggregation, cached in Redis.
+- **Daily Challenge** with double-XP rewards.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🎤 Mock Interviews
+- **Simulated Sessions** with custom queues and strict timers.
+- **Local Recording** of voice, video & workspace in-browser.
+- **AI Feedback Report** on code cleanliness, debugging speed & approach.
+
+</td>
+<td width="50%" valign="top">
+
+### 💬 Community & Social
+- **Discussion Forum** (`/discuss`) — threaded solutions & doubts.
+- **Follow System** & **Public Profiles** with badges, stats & heatmaps.
+- **Feedback Channel** routed to admins.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 💳 Subscriptions & Billing
+- **Razorpay** — order creation, verification & cancellation.
+- **Free Trials** — Go Plan free for 30 days, no card.
+- **Beta Program** — `/beta/join`, first **50** users get the Go Plan free.
+
+</td>
+<td width="50%" valign="top">
+
+### 🛡 Admin Dashboard (`/admin`)
+- **Questions** — AI-generate, upload JSON, edit & publish.
+- **Users** — inspect, manage subscriptions, promote admins.
+- **Contests, Challenges, Prompt Templates & Site Settings.**
+- **Analytics & Submissions** insights.
+
+</td>
+</tr>
+</table>
+
+> **Onboarding & Accounts** — Guided onboarding flow, **NextAuth.js v5** with email/password plus optional Google & GitHub OAuth, and forgot/reset-password flows.
+>
+> **Docs & Transparency** — Browsable **OpenAPI/Swagger** docs at `/docs`, plus first-class Changelog, Pricing, Privacy & Terms pages.
 
 ---
 
-## Technical Stack & Integration Matrix
+## 🧱 Tech Stack
 
-| Layer | Technology | Primary Purpose | Integration Mechanism |
-| :--- | :--- | :--- | :--- |
-| **Framework** | **Next.js 15 (App Router)** | Hybrid SSG/SSR rendering, Server Actions, API middleware | Direct routing and action calls |
-| **Language** | **TypeScript (Strict)** | Compile-time safety and type enforcement | Monorepo declaration files |
-| **Styling** | **Tailwind CSS v4** | Rapid utility styling with zero runtime cost | Configured via Native CSS Modules |
-| **Database** | **MongoDB + Mongoose** | Persistent storage of user data, questions, submissions, and metrics | Mongoose ORM models |
-| **Caching/Limits** | **Upstash Redis** | Session tokens, request rate-limiting, and leaderboard cache | Upstash REST Client SDK |
-| **Auth** | **NextAuth.js v5** | Secure credential & OAuth (Google, GitHub) management | JWT session validation middleware |
-| **Sandbox** | **@codesandbox/sandpack** | Client-side frontend compiler and virtual workspace | Embedded React components |
-| **Editor** | **@monaco-editor/react** | Rich IDE-like source editing inside the browser | Virtual DOM bindings & State Sync |
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Framework** | Next.js 15 (App Router) | SSG/SSR, Server Actions, API middleware |
+| **Language** | TypeScript (Strict) | Compile-time safety |
+| **Styling** | Tailwind CSS v4 | Utility-first, zero-runtime styling |
+| **Database** | MongoDB + Mongoose | Users, questions, submissions, metrics |
+| **Cache / Limits** | Upstash Redis | Rate-limiting & leaderboard cache |
+| **Auth** | NextAuth.js v5 | Credentials + Google/GitHub OAuth |
+| **AI** | Groq (Llama 3) | Streaming mentor, tools & generation |
+| **Payments** | Razorpay | Subscriptions, trials & billing |
+| **Sandbox** | @codesandbox/sandpack | Client-side frontend compiler |
+| **Editor** | @monaco-editor/react | In-browser IDE editing |
+| **State** | Zustand + React Query | Client & server-state management |
+| **Email** | Nodemailer | Beta & password-reset email |
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
-
-* **Node.js** >= 18.x
-* **MongoDB Instance** (Local or MongoDB Atlas cluster)
-* **Redis Instance** (Optional; falls back to in-memory store)
-* **Groq API Key** (Optional; enables AI mentor functionality)
+- **Node.js** ≥ 18.x
+- **MongoDB** (local or Atlas)
+- **Redis** *(optional — falls back to in-memory store)*
+- **Groq API Key** *(optional — enables AI mentor & tools)*
 
 ### Installation
 
-1. **Clone the repository and install dependencies:**
-   ```bash
-   npm install
-   ```
+```bash
+# 1. Install dependencies
+npm install
 
-2. **Configure environment variables:**
-   Copy the example file to `.env.local` and populate the fields:
-   ```bash
-   cp .env.example .env.local
-   ```
+# 2. Configure environment
+cp .env.example .env.local
+```
 
-   Configure the mandatory variables in `.env.local`:
-   ```env
-   # Database connection
-   MONGODB_URI="mongodb+srv://..."
-   
-   # Authentication secret (Generate using `openssl rand -base64 32`)
-   AUTH_SECRET="your-generated-auth-secret"
-   ```
+Set the **required** variables in `.env.local`:
 
-3. **Launch the development server:**
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:3000` to preview the application.
+```env
+# Database connection
+MONGODB_URI="mongodb+srv://..."
 
----
-
-## Environment Configuration Reference
-
-| Variable | Scope | Status | Purpose / Fallback Behavior |
-| :--- | :--- | :--- | :--- |
-| `MONGODB_URI` | Core | **Required** | Stores users, questions, contests, submissions, and metadata. |
-| `AUTH_SECRET` | Core | **Required** | Used by NextAuth to sign and verify cookies. |
-| `GROQ_API_KEY` | AI | *Optional* | Streams hints/explanations. If omitted, AI panels show setup instructions gracefully. |
-| `UPSTASH_REDIS_REST_URL` | Cache/Limit | *Optional* | Shared rate limiting & high-performance leaderboards. Falls back to in-memory list. |
-| `UPSTASH_REDIS_REST_TOKEN` | Cache/Limit | *Optional* | Authentication token for Upstash Redis. |
-| `GOOGLE_CLIENT_ID` / `SECRET` | Auth | *Optional* | Enables one-click sign-in via Google accounts. |
-| `GITHUB_CLIENT_ID` / `SECRET` | Auth | *Optional* | Enables one-click sign-in via GitHub accounts. |
-| `EXECUTION_PROVIDER` | Execution | *Optional* | Set to `paiza` (default), `judge0`, or `piston` depending on preference. |
-| `ADMIN_EMAILS` | Admin | *Optional* | Comma-separated email list promoted automatically to administrators on signup. |
-
----
-
-## Initial Run Checklist
-
-1. **Create an Admin Account**: 
-   Add your primary registration email to `ADMIN_EMAILS` in `.env.local`. Register at `/register` to automatically gain administrator access.
-2. **Populate Questions**:
-   Navigate to the **Admin Dashboard** $\rightarrow$ **Questions**. You can:
-   - Click **Generate with AI** and enter a prompt like *"Generate 5 Easy Array Questions"* (requires `GROQ_API_KEY`).
-   - Click **Upload JSON** and upload a schema-matching JSON file.
-3. **Publish Questions**:
-   Flip the **Published** switch on questions you want to make visible to users.
-4. **Test Run**:
-   Navigate to `/problems`, open a task, select your language of choice, and click **Run Code**.
-
-> [!IMPORTANT]
-> **Question Input/Output Contract**
-> Code execution evaluates full programs reading from **stdin** and writing to **stdout**. 
-> - The test case `input` matches the raw stdin stream.
-> - The test case `expected` matches the raw stdout stream.
-> 
-> Keep this consistent when writing or generating custom questions.
-
----
-
-## Code Execution Engines
-
-CodeForge AI abstractly wraps multiple code execution providers under a single `ExecutionProvider` interface. Switch runtime backends instantly by updating the `EXECUTION_PROVIDER` env variable:
-
-* **Paiza (Default)**: Out-of-the-box support without API keys. Ideal for local dev environments and zero-config deployment.
-* **Judge0 CE**: High-concurrency sandbox using RapidAPI. Excellent for high-performance setups. Requires `EXECUTION_PROVIDER=judge0` and `JUDGE0_API_KEY`.
-* **Self-hosted Piston**: Access an isolated, self-hosted Dockerized execution cluster. Set `EXECUTION_PROVIDER=piston` and `PISTON_URL`.
-
----
-
-## Graceful Degradation & Resilience
-
-CodeForge AI is designed to operate even with minimal external API integrations:
-
-* **No Groq Configured**: All AI Mentor panels dynamically render an inline setup alert instructing admins how to provide keys. Standard editor compiles, test run features, and user metrics function fully.
-* **No Redis Configuration**: The platform falls back to an in-process memory cache for rate-limiting calculations, and calculates contest rankings directly from MongoDB collections on-demand.
-* **Omitted OAuth (Google/GitHub)**: The Auth logic automatically hides provider login buttons if credentials are not configured, defaulting seamlessly to traditional email/password credentials.
-
----
-
-## Testing and Tooling
-
-Use the following commands to check codebase integrity:
+# Auth secret — generate with: openssl rand -base64 32
+AUTH_SECRET="your-generated-auth-secret"
+```
 
 ```bash
-# Run unit & component tests using Jest
-npm test
+# 3. (optional) Seed starter questions
+npm run seed
 
-# Run end-to-end integration tests using Playwright
-npm run test:e2e
+# 4. Start the dev server
+npm run dev
+```
 
-# Perform code static analysis via ESLint
-npm run lint
+Open **http://localhost:3000** to preview the app.
 
-# Compile and typecheck without emitting output files
-npm run typecheck
+### Initial Run Checklist
+1. **Become an admin** — add your email to `ADMIN_EMAILS`, then register at `/register`.
+2. **Add questions** — in **Admin → Questions**: *Generate with AI*, *Upload JSON*, or run `npm run seed`.
+3. **Publish** — flip the **Published** switch on questions to make them visible.
+4. **Test run** — open a problem at `/problems`, pick a language, and **Run Code**.
+
+> [!IMPORTANT]
+> **Question I/O Contract** — Execution runs full programs reading **stdin** and writing **stdout**. A test case's `input` is the raw stdin stream and `expected` is the raw stdout stream. Keep this consistent when authoring or generating questions.
+
+---
+
+## ⚙️ Environment Reference
+
+| Variable | Scope | Status | Purpose / Fallback |
+| :--- | :--- | :--- | :--- |
+| `MONGODB_URI` | Core | **Required** | Users, questions, contests, submissions. |
+| `AUTH_SECRET` | Core | **Required** | Signs & verifies NextAuth cookies. |
+| `GROQ_API_KEY` | AI | *Optional* | Streams hints, explanations & AI tools. Panels show setup help if omitted. |
+| `UPSTASH_REDIS_REST_URL` / `_TOKEN` | Cache | *Optional* | Rate-limiting & leaderboards. Falls back to in-memory. |
+| `GOOGLE_CLIENT_ID` / `_SECRET` | Auth | *Optional* | Google one-click sign-in. |
+| `GITHUB_CLIENT_ID` / `_SECRET` | Auth | *Optional* | GitHub one-click sign-in. |
+| `EXECUTION_PROVIDER` | Execution | *Optional* | `paiza` (default), `judge0`, or `piston`. |
+| `JUDGE0_API_KEY` | Execution | *Optional* | Required when `EXECUTION_PROVIDER=judge0`. |
+| `PISTON_URL` | Execution | *Optional* | Required when `EXECUTION_PROVIDER=piston`. |
+| `RAZORPAY_KEY_ID` / `_SECRET` | Billing | *Optional* | Subscriptions, trials & the beta Go Plan. |
+| `SMTP_*` | Email | *Optional* | Beta confirmation & password-reset email. |
+| `ADMIN_EMAILS` | Admin | *Optional* | Comma-separated emails auto-promoted to admin on signup. |
+
+---
+
+## ⚙️ Code Execution Engines
+
+A single `ExecutionProvider` interface wraps multiple backends — switch instantly via `EXECUTION_PROVIDER`:
+
+- **Paiza** *(default)* — zero-config, no API key. Great for local dev.
+- **Judge0 CE** — high-concurrency sandbox via RapidAPI. Needs `JUDGE0_API_KEY`.
+- **Piston** *(self-hosted)* — isolated, Dockerized cluster. Needs `PISTON_URL`.
+
+### Graceful Degradation
+- **No Groq** → AI panels show inline setup help; editor, runs & metrics still work.
+- **No Redis** → in-process cache; rankings computed from MongoDB on demand.
+- **No Razorpay** → payments disabled gracefully; free/beta flows still work.
+- **No OAuth** → provider buttons hidden; email/password remains.
+
+---
+
+## 🧪 Testing & Tooling
+
+```bash
+npm test          # Unit & component tests (Jest)
+npm run test:e2e  # End-to-end tests (Playwright)
+npm run lint      # Static analysis (ESLint)
+npm run typecheck # Type-check without emitting
 ```
 
 ---
 
-## Deployment
+## 📝 Changelog
 
-CodeForge AI is fully optimized for Vercel out of the box:
+Full release notes live in-app at `/changelog`. Recent highlights:
+
+| Version | Tag | Date | Highlights |
+| :--- | :--- | :--- | :--- |
+| **1.1.0** | 🟢 Latest | Jun 17, 2025 | Admin Settings panel (SEO, Analytics, Email, AI, Runner, DB, Cache, OAuth & Payments from the UI), GA4 + Clarity + Search Console, `/feedback`, auto sitemap & robots.txt, advanced SEO (OG, Twitter Cards, JSON-LD), per-service Test Connection buttons. |
+| **1.0.1** | 🔴 Security | Jun 17, 2025 | CSP & HSTS headers, `X-Frame-Options: DENY`, hardened auth cookies, 7-day JWT sessions, CORS guard on mutations, NoSQL regex-injection fix, content sanitization, stronger passwords. |
+| **1.0.0** | 🔵 Launch | Jun 17, 2025 | Public launch — Monaco editor (12 langs), AI Mentor & Pair Programmer, Learning Coach, SM-2 spaced repetition, analytics & weakness detection, streaks/XP/badges/leaderboards, contests & daily challenges, company sets, forum, frontend sandbox with AI design review, roadmaps, Google/GitHub OAuth, password reset. |
+| **0.9.0** | 🟠 Beta | Jun 10, 2025 | Beta — core problem-solving, JS/Python execution, profiles & submission history, initial AI hints. |
+| **0.5.0** | 🟣 Alpha | May 20, 2025 | Private alpha — problem listing/detail, email auth, basic submission & verdicts. |
+
+---
+
+## ☁️ Deployment
+
+Optimized for **Vercel** out of the box:
 
 1. Import your GitHub repository to Vercel.
-2. Ensure you add all required environment variables.
-3. Deploy. The repository contains a pre-configured `vercel.json` structure that handles standard Serverless Function timeouts for execution and streaming AI routes.
+2. Add all required environment variables.
+3. Deploy — the bundled `vercel.json` configures Serverless Function timeouts for execution and streaming AI routes.
+
+---
+
+<div align="center">
+
+<br/>
+
+Built with care by
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/white.png">
+  <source media="(prefers-color-scheme: light)" srcset="public/black.png">
+  <img src="public/black.png" alt="Setups Works" height="44">
+</picture>
+
+<sub>Licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a></sub>
+
+</div>

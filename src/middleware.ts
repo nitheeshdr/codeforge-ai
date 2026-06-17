@@ -16,6 +16,9 @@ const PUBLIC_PREFIXES = [
   "/pricing", // public pricing page
   "/forgot-password",
   "/reset-password",
+  "/terms",
+  "/privacy",
+  "/changelog",
   "/_next",
   "/favicon",
 ];

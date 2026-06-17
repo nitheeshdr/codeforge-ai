@@ -33,7 +33,7 @@ export function RegisterForm({
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", username: "", email: "", password: "" },
+    defaultValues: { name: "", username: "", email: "", password: "", terms: undefined },
   });
 
   async function onSubmit(values: RegisterInput) {
@@ -127,6 +127,27 @@ export function RegisterForm({
               </p>
             )}
           </div>
+          <div className="flex items-start gap-2.5">
+            <input
+              id="terms"
+              type="checkbox"
+              className="mt-0.5 size-4 shrink-0 accent-primary cursor-pointer"
+              {...form.register("terms")}
+            />
+            <label htmlFor="terms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+              I agree to the{" "}
+              <a href="/terms" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                Terms &amp; Conditions
+              </a>{" "}
+              and{" "}
+              <a href="/privacy" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">
+                Privacy Policy
+              </a>
+            </label>
+          </div>
+          {errors.terms && (
+            <p className="text-xs text-destructive">{errors.terms.message}</p>
+          )}
           <Button type="submit" disabled={submitting}>
             {submitting && <Loader2 className="size-4 animate-spin" />}
             Create account

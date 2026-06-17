@@ -17,11 +17,15 @@ export const registerSchema = z.object({
     .string()
     .min(8, "Password must be at least 8 characters")
     .max(128),
+  terms: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the Terms & Privacy Policy" }),
+  }),
 });
 
 export const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(1, "Password is required"),
+  rememberMe: z.boolean().optional().default(false),
 });
 
 export const forgotPasswordSchema = z.object({

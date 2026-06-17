@@ -56,7 +56,7 @@ const PricingCards = dynamic(
   () => import("@/features/subscription/pricing-cards").then((m) => m.PricingCards),
   { ssr: false, loading: () => <div className="h-96 animate-pulse rounded-2xl lp-card" /> },
 );
-import { APP_NAME, LANGUAGES } from "@/lib/constants";
+import { APP_NAME, APP_VERSION, LANGUAGES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export interface LandingProblem {
@@ -201,6 +201,7 @@ const FOOTER_COLS = [
   { heading: "Learn", links: [{ label: "Weakness Detection", href: "/weakness" }, { label: "Smart Revision", href: "/revision" }, { label: "Skill Analytics", href: "/analytics" }, { label: "Daily Plan", href: "/weakness" }] },
   { heading: "AI Tools", links: [{ label: "Learning Coach", href: "/ai-tools" }, { label: "Pair Programmer", href: "/ai-tools" }, { label: "Study Planner", href: "/ai-tools" }, { label: "Resume Analyzer", href: "/ai-tools" }] },
   { heading: "Community", links: [{ label: "Forum", href: "/forum" }, { label: "Discussions", href: "/discuss" }, { label: "Notes", href: "/notes" }, { label: "Company Prep", href: "/companies" }] },
+  { heading: "Legal", links: [{ label: "Terms & Conditions", href: "/terms" }, { label: "Privacy Policy", href: "/privacy" }, { label: "Changelog", href: "/changelog" }] },
 ];
 
 /* ── motion helpers ───────────────────────────────────────────────── */
@@ -1197,7 +1198,12 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
         <div className="border-t lp-border-faint">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs lp-ink-5">
             <p>© {new Date().getFullYear()} {APP_NAME}. Built by Setups Works.</p>
-            <p>26+ features · 9 AI tools · 100% free ⚡</p>
+            <div className="flex items-center gap-4">
+              <Link href="/terms" className="hover:text-orange-400 transition-colors">Terms</Link>
+              <Link href="/privacy" className="hover:text-orange-400 transition-colors">Privacy</Link>
+              <Link href="/changelog" className="hover:text-orange-400 transition-colors">Changelog</Link>
+              <span className="rounded-full border lp-border-faint px-2 py-0.5 font-mono">v{APP_VERSION}</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -35,7 +35,7 @@ export function LoginForm({
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "", rememberMe: false },
   });
 
   async function onSubmit(values: LoginInput) {
@@ -104,6 +104,17 @@ export function LoginForm({
                 {form.formState.errors.password.message}
               </p>
             )}
+          </div>
+          <div className="flex items-center gap-2.5">
+            <input
+              id="rememberMe"
+              type="checkbox"
+              className="size-4 accent-primary cursor-pointer"
+              {...form.register("rememberMe")}
+            />
+            <label htmlFor="rememberMe" className="text-xs text-muted-foreground cursor-pointer select-none">
+              Remember me for 30 days
+            </label>
           </div>
           <Button type="submit" disabled={submitting}>
             {submitting && <Loader2 className="size-4 animate-spin" />}

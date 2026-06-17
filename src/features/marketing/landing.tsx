@@ -26,6 +26,7 @@ import {
   Code2,
   Flame,
   GraduationCap,
+  Heart,
   Map,
   Sparkles,
   Star,
@@ -1125,9 +1126,15 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
           </div>
         </div>
         <div className="border-t lp-border-faint">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs lp-ink-5">
-            <p>© {new Date().getFullYear()} {APP_NAME}. Built by Setups Works.</p>
-            <div className="flex items-center gap-4">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-y-3 px-4 py-5 text-xs lp-ink-5 sm:grid-cols-3 sm:items-center">
+            <p>© {new Date().getFullYear()} {APP_NAME}</p>
+            <div className="flex items-center justify-center gap-1.5">
+              from the
+              <Heart className="size-3 fill-red-500 text-red-500" />
+              <img src="/white.png" alt="Setups Works" className="h-6 w-auto hidden dark:inline-block" />
+              <img src="/black.png" alt="Setups Works" className="h-6 w-auto inline-block dark:hidden" />
+            </div>
+            <div className="flex items-center gap-4 sm:justify-end">
               <Link href="/terms" className="hover:text-orange-400 transition-colors">Terms</Link>
               <Link href="/privacy" className="hover:text-orange-400 transition-colors">Privacy</Link>
               <Link href="/changelog" className="hover:text-orange-400 transition-colors">Changelog</Link>

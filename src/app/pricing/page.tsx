@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models";
 import { PublicHeader } from "@/components/layout/public-header";
 import { PricingCards } from "@/features/subscription/pricing-cards";
-import { ShieldCheck, RefreshCw, HeadphonesIcon } from "lucide-react";
+import { Clock, RefreshCw, HeadphonesIcon, Sparkles } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing — CodeForge AI",
   description: "Simple, transparent pricing. Start free, upgrade anytime.",
 };
 export const dynamic = "force-dynamic";
+
+const paymentsEnabled = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
 export default async function PricingPage() {
   const session = await auth();
@@ -41,12 +44,34 @@ export default async function PricingPage() {
           </p>
         </div>
 
+        {/* Beta banner — shown only when payments are not yet live */}
+        {!paymentsEnabled && (
+          <div className="mb-8 rounded-2xl border border-orange-500/30 bg-orange-500/10 p-5 text-center">
+            <div className="mb-2 flex items-center justify-center gap-2 text-sm font-semibold text-orange-400">
+              <Sparkles className="size-4" />
+              Paid plans launching soon
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Online payments aren&apos;t live yet — but the first{" "}
+              <strong className="text-foreground">50 beta users</strong> get the{" "}
+              <strong className="text-foreground">Go Plan free for 30 days</strong>, no card needed.
+            </p>
+            <Link
+              href="/beta/join"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-orange-500/40 bg-orange-500/15 px-4 py-2 text-sm font-bold text-orange-400 transition-colors hover:bg-orange-500/25"
+            >
+              Claim your free beta spot →
+            </Link>
+          </div>
+        )}
+
         <PricingCards currentPlan={currentPlan} />
 
         {/* trust badges */}
         <div className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <span className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-primary" /> Secure payments via Razorpay
+            <Clock className="size-4 text-primary" />
+            {paymentsEnabled ? "Secure payments via Razorpay" : "Online payments coming soon"}
           </span>
           <span className="flex items-center gap-2">
             <RefreshCw className="size-4 text-primary" /> Cancel anytime, no questions asked
@@ -64,7 +89,7 @@ export default async function PricingPage() {
               { q: "Do I need a credit card for the free trial?", a: "No. Your 7-day free trial starts without any payment. You'll only be charged if you subscribe after the trial." },
               { q: "Can I switch plans?", a: "Yes. You can upgrade or downgrade at any time from Settings → Billing. Upgrades take effect immediately." },
               { q: "What happens when my trial ends?", a: "You'll automatically move to the Free plan. Your data is kept; you just lose access to paid features until you subscribe." },
-              { q: "Is my payment information secure?", a: "All payments are processed through Razorpay, a PCI-DSS compliant payment gateway. We never store your card details." },
+              { q: "When will paid plans launch?", a: "We're setting up secure payment infrastructure and will launch paid plans soon. Join the beta in the meantime to get the Go Plan free for 30 days." },
               { q: "Can I get a refund?", a: "We offer a 3-day refund window from the date of payment. Contact support and we'll process it right away." },
             ].map(({ q, a }) => (
               <details key={q} className="group rounded-xl border p-4 cursor-pointer">

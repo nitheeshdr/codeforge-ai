@@ -7,6 +7,10 @@ import { PLANS } from "@/lib/plans";
 import type { BillingCycle, PlanId } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    return NextResponse.json({ error: "Payments are not available yet. Stay tuned!" }, { status: 503 });
+  }
+
   const { session, error } = await requireUser();
   if (error) return error;
 

@@ -26,7 +26,7 @@ export function Logo({
       {!compact && (
         <>
           <span className="text-base">{APP_NAME}</span>
-          <span className="rounded-md border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-400">
+          <span className="rounded-md border border-black-500/30 bg-black-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white-400">
             Beta
           </span>
         </>

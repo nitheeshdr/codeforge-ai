@@ -6,9 +6,8 @@ import { sendEmail } from "@/lib/mailer";
 import { betaWelcomeEmailHtml, betaWelcomeEmailSubject } from "@/lib/email-templates";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { sanitizeUserContent, cap } from "@/lib/sanitize";
+import { BETA_LIMIT } from "@/lib/constants";
 import { z } from "zod";
-
-export const BETA_LIMIT = 50;
 
 const betaSchema = z.object({
   name: z.string().min(2).max(80),

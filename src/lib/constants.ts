@@ -288,6 +288,8 @@ export const EXECUTION_LIMITS = {
   maxTestCasesPerRun: 20,
 };
 
+export const BETA_LIMIT = 50;
+
 export const RATE_LIMITS = {
   auth: { requests: 10, window: "60 s" },
   execute: { requests: 12, window: "60 s" },

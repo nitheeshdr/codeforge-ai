@@ -23,7 +23,14 @@ export function Logo({
       <span className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <Flame className="size-4" />
       </span>
-      {!compact && <span className="text-base">{APP_NAME}</span>}
+      {!compact && (
+        <>
+          <span className="text-base">{APP_NAME}</span>
+          <span className="rounded-md border border-purple-500/30 bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-400">
+            Beta
+          </span>
+        </>
+      )}
     </Link>
   );
 }

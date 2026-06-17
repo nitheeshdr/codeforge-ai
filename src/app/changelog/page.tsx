@@ -8,10 +8,24 @@ export const metadata = {
 
 const RELEASES = [
   {
-    version: "1.1.1",
+    version: "1.2.0",
     date: "June 18, 2025",
     tag: "Latest",
     tagColor: "bg-green-500/15 text-green-500 border-green-500/30",
+    changes: {
+      new: [
+        "GitHub authentication — sign in with your GitHub account; the button appears automatically once OAuth is configured",
+        "Feedback now opens a GitHub issue — submissions from /feedback create a labelled issue in the repository, with email kept as a fallback",
+      ],
+      improved: [],
+      fixed: [],
+    },
+  },
+  {
+    version: "1.1.1",
+    date: "June 18, 2025",
+    tag: "Stable",
+    tagColor: "bg-blue-500/15 text-blue-500 border-blue-500/30",
     changes: {
       new: [],
       improved: [

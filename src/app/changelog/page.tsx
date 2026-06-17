@@ -8,10 +8,62 @@ export const metadata = {
 
 const RELEASES = [
   {
-    version: "1.0.0",
+    version: "1.1.0",
     date: "June 17, 2025",
     tag: "Latest",
     tagColor: "bg-green-500/15 text-green-500 border-green-500/30",
+    changes: {
+      new: [
+        "Admin Settings panel — configure SEO, Analytics, Email, AI, Code Runner, Database, Cache, OAuth, and Payments from the UI without touching .env files",
+        "Google Analytics (GA4) integration — Measurement ID configurable from admin",
+        "Microsoft Clarity integration — project ID configurable from admin",
+        "Google Search Console verification meta tag — set verification code from admin",
+        "Feedback page at /feedback — users can submit Feature Requests, Bug Reports, and Issues; emails delivered to info@setups.works",
+        "Shared header + footer across all info pages (Terms, Privacy, Changelog, Feedback)",
+        "GitHub repository link in footer, replacing X and YouTube icons",
+        "Sitemap at /sitemap.xml — auto-generated with all static routes + every problem slug",
+        "Robots.txt at /robots.txt — blocks admin/dashboard/API from indexing",
+      ],
+      improved: [
+        "Advanced SEO: full Open Graph, Twitter Card, canonical URL, robots directives, and JSON-LD structured data (WebSite + Organization schema) on every page",
+        "SEO metadata now reads from Admin Settings DB with env var fallback — change site name, description, keywords, OG image without a redeploy",
+        "Test Connection buttons in admin for every service: SMTP (sends real email), Groq, MongoDB, Redis, Judge0, Piston, Paiza, Razorpay",
+        "Footer Legal column now includes Feedback link",
+      ],
+      fixed: [
+        "Build errors: unused lucide imports, unescaped JSX entities in Terms/Privacy pages",
+        "Login Internal Server Error — rememberMe field caused NextAuth authorize() to always fail when schema required boolean",
+        "Zod v4 literal errorMap renamed to message",
+      ],
+    },
+  },
+  {
+    version: "1.0.1",
+    date: "June 17, 2025",
+    tag: "Security",
+    tagColor: "bg-red-500/15 text-red-500 border-red-500/30",
+    changes: {
+      new: [],
+      improved: [
+        "Content-Security-Policy header added — restricts script/style/img/connect sources, blocks frame-ancestors, disallows object-src hijacking",
+        "Strict-Transport-Security (HSTS) — 2-year max-age with includeSubDomains and preload",
+        "X-Frame-Options upgraded to DENY (was SAMEORIGIN)",
+        "Auth cookies: explicit httpOnly, secure, sameSite=lax; __Secure-/__Host- prefixes in production",
+        "JWT session lifetime reduced from 30 days to 7 days",
+        "CORS origin guard on all mutating API requests (POST/PUT/PATCH/DELETE)",
+        "NoSQL regex injection fix: all $regex search queries now escape metacharacters",
+        "Server-side user content sanitization: null bytes, javascript: URIs, inline event handlers stripped before DB write",
+        "Password strength rule added: must contain uppercase, number, or symbol",
+        "Cache-Control: no-store on /api/auth/* responses",
+      ],
+      fixed: [],
+    },
+  },
+  {
+    version: "1.0.0",
+    date: "June 17, 2025",
+    tag: "Launch",
+    tagColor: "bg-blue-500/15 text-blue-500 border-blue-500/30",
     changes: {
       new: [
         "Launched CodeForge AI — AI-powered coding interview prep platform",

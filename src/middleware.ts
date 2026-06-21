@@ -27,6 +27,7 @@ const PUBLIC_PREFIXES = [
   "/favicon",
   "/sitemap.xml",
   "/robots.txt",
+  "/monitoring", // Sentry tunnel route — must not be auth-gated
 ];
 
 /** Allowed origins for cross-origin API requests (empty = same-origin only). */

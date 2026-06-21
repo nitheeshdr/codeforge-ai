@@ -1,10 +1,7 @@
-import * as Sentry from "@sentry/nextjs";
 import type { Instrumentation } from "next";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("../sentry.server.config");
-
     // Ship server-side logs to PostHog (node-only; not edge-safe).
     const { loggerProvider } = await import("./lib/otel-logger");
     if (loggerProvider) {
@@ -12,20 +9,13 @@ export async function register() {
       logs.setGlobalLoggerProvider(loggerProvider);
     }
   }
-
-  if (process.env.NEXT_RUNTIME === "edge") {
-    await import("../sentry.edge.config");
-  }
 }
 
-// Capture server-side request errors in both Sentry and PostHog.
+// Capture server-side request errors in PostHog.
 export const onRequestError: Instrumentation.onRequestError = async (
   err,
   request,
-  context,
 ) => {
-  Sentry.captureRequestError(err, request, context);
-
   if (process.env.NEXT_RUNTIME === "nodejs") {
     const { getPostHogServer } = await import("./lib/posthog-server");
     const posthog = getPostHogServer();

@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import posthog from "posthog-js";
-import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 
 export default function PlatformError({
@@ -15,7 +14,6 @@ export default function PlatformError({
 }) {
   useEffect(() => {
     console.error(error);
-    Sentry.captureException(error);
     posthog.captureException(error);
   }, [error]);
 

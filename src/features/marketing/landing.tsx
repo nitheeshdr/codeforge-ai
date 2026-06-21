@@ -42,6 +42,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Logo } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { DifficultyBadge } from "@/components/shared/difficulty-badge";
 const PricingCards = dynamic(
   () => import("@/features/subscription/pricing-cards").then((m) => m.PricingCards),
@@ -343,6 +344,7 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
             ))}
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             {signedIn ? (
               <Button asChild size="sm" className="bg-orange-500 lp-ink hover:bg-orange-600">
                 <Link href="/dashboard">Dashboard <ArrowRight className="size-4" /></Link>

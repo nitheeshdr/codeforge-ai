@@ -20,6 +20,7 @@ export function PostHogProvider({ children }: { children: ReactNode }) {
       api_host: POSTHOG_HOST,
       capture_pageview: false, // captured manually for App Router navigations
       capture_pageleave: true,
+      capture_exceptions: true, // autocapture unhandled client-side errors
       person_profiles: "identified_only",
     });
   }, []);

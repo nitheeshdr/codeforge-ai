@@ -6,6 +6,7 @@ import { ThemeProvider } from "next-themes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { PostHogProvider } from "@/components/posthog-provider";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -22,18 +23,20 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   return (
-    <SessionProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
-          <Toaster richColors position="bottom-right" />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </SessionProvider>
+    <PostHogProvider>
+      <SessionProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
+            <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+            <Toaster richColors position="bottom-right" />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </SessionProvider>
+    </PostHogProvider>
   );
 }

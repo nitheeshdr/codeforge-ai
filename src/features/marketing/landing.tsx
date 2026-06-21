@@ -413,8 +413,8 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
 
           <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 lg:grid-cols-[1fr_1.1fr] lg:py-28">
             {/* Left — text */}
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+            <motion.div initial={{ y: 24 }} animate={{ y: 0 }} transition={{ duration: 0.6 }}>
+              <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} transition={{ delay: 0.1 }}>
                 <Badge className="mb-6 gap-2 border border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-orange-400 hover:bg-orange-500/15">
                   <Sparkles className="size-3.5" /> 26+ features · 9 AI tools · 100% free
                 </Badge>
@@ -462,8 +462,8 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
 
             {/* Right — 3D editor mockup */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 30 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative mx-auto w-full max-w-xl"
             >

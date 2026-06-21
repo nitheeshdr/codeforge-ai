@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
 import { User } from "@/models";
 import { PLANS, type PlanId } from "@/lib/plans";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
   const { session, error } = await requireUser();
@@ -29,6 +30,13 @@ export async function POST(req: NextRequest) {
     plan,
     trialEndsAt,
     planExpiresAt: trialEndsAt,
+  });
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "trial_started",
+    properties: { plan, trial_days: trialDays },
   });
 
   return NextResponse.json({ ok: true, plan, trialEndsAt });

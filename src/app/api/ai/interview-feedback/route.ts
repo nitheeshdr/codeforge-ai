@@ -4,6 +4,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import { interviewFeedbackSchema } from "@/schemas/ai";
 import { complete, isAiConfigured } from "@/services/ai/groq";
 import { getPrompt } from "@/services/ai/prompts";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export const maxDuration = 60;
 
@@ -61,6 +62,18 @@ export async function POST(req: NextRequest) {
     ],
     { temperature: prompt.temperature, maxTokens: prompt.maxTokens },
   );
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "interview_feedback_requested",
+    properties: {
+      topic: parsed.data.topic,
+      duration_minutes: parsed.data.durationMinutes,
+      questions_count: parsed.data.questions.length,
+      solved_count: parsed.data.questions.filter((q) => q.solved).length,
+    },
+  });
 
   return NextResponse.json({ report });
 }

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { z } from "zod";
 import { sendEmail } from "@/lib/mailer";
 import { createIssue, isGithubFeedbackEnabled } from "@/lib/github";
+import { serverLog, flushLogs } from "@/lib/otel-logger";
 import { APP_NAME } from "@/lib/constants";
 
 const feedbackSchema = z.object({
@@ -43,6 +45,11 @@ export async function POST(req: NextRequest) {
   const { type, title, description, email } = parsed.data;
   const typeLabel = TYPE_LABELS[type] ?? type;
   const from = email ? `from ${email}` : "anonymous";
+
+  serverLog("Feedback submitted", { type, hasEmail: Boolean(email) });
+  after(async () => {
+    await flushLogs();
+  });
 
   const html = `
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">

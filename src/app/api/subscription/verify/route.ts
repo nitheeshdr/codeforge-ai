@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
 import { User } from "@/models";
 import { Subscription } from "@/models/Subscription";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
   const { session, error } = await requireUser();
@@ -47,6 +48,13 @@ export async function POST(req: NextRequest) {
     planExpiresAt: periodEnd,
     billingCycle: sub.billingCycle,
     trialEndsAt: null,
+  });
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "subscription_purchased",
+    properties: { plan: sub.plan, billing_cycle: sub.billingCycle },
   });
 
   return NextResponse.json({ ok: true, plan: sub.plan, expiresAt: periodEnd });

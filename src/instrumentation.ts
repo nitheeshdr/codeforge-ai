@@ -4,6 +4,13 @@ import type { Instrumentation } from "next";
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("../sentry.server.config");
+
+    // Ship server-side logs to PostHog (node-only; not edge-safe).
+    const { loggerProvider } = await import("./lib/otel-logger");
+    if (loggerProvider) {
+      const { logs } = await import("@opentelemetry/api-logs");
+      logs.setGlobalLoggerProvider(loggerProvider);
+    }
   }
 
   if (process.env.NEXT_RUNTIME === "edge") {

@@ -7,6 +7,7 @@ import {
   normalizeQuestionImport,
 } from "@/schemas/question";
 import { saveQuestionDraft } from "@/services/ai/generate-questions";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 const MAX_USER_UPLOAD = 20;
 
@@ -67,6 +68,15 @@ export async function POST(req: NextRequest) {
         reason: saveError instanceof Error ? saveError.message : "Save failed",
       });
     }
+  }
+
+  if (created.length > 0) {
+    const posthog = getPostHogServer();
+    posthog?.capture({
+      distinctId: session.user.id,
+      event: "question_contributed",
+      properties: { created_count: created.length, failed_count: failed.length },
+    });
   }
 
   return NextResponse.json({ created, failed }, { status: 201 });

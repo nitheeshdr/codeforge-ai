@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { enforceRateLimit } from "@/lib/rate-limit";
 import { joinContest } from "@/services/contests";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export async function POST(
   req: NextRequest,
@@ -18,5 +19,13 @@ export async function POST(
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "contest_joined",
+    properties: { contest_slug: slug },
+  });
+
   return NextResponse.json({ ok: true });
 }

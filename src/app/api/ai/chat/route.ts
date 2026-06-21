@@ -11,6 +11,7 @@ import {
   type ChatMessage,
 } from "@/services/ai/groq";
 import { getPrompt } from "@/services/ai/prompts";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export const maxDuration = 60;
 
@@ -108,6 +109,18 @@ export async function POST(req: NextRequest) {
     ...history,
     { role: "user", content: userMessage },
   ];
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "ai_mentor_messaged",
+    properties: {
+      action: input.action,
+      context: input.context,
+      has_question: !!input.questionId,
+      has_challenge: !!input.challengeId,
+    },
+  });
 
   const encoder = new TextEncoder();
   let assistantReply = "";

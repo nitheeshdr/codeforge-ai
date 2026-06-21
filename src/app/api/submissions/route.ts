@@ -14,6 +14,7 @@ import {
   recordDailyActivity,
   awardContestBadge,
 } from "@/services/gamification";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export const maxDuration = 120;
 
@@ -155,6 +156,23 @@ export async function POST(req: NextRequest) {
       tags: [...question.tags, question.category],
     });
   }
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "code_submitted",
+    properties: {
+      status,
+      language: language.id,
+      difficulty: question.difficulty,
+      category: question.category,
+      first_accept: firstAccept,
+      in_contest: !!contestId,
+      passed_count: suite.passedCount,
+      total_count: suite.totalCount,
+      runtime_ms: suite.totalTimeMs,
+    },
+  });
 
   return NextResponse.json({
     submissionId: submission._id.toString(),

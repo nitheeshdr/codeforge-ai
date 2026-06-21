@@ -13,6 +13,7 @@ import {
   recordDailyActivity,
 } from "@/services/gamification";
 import type { Difficulty } from "@/lib/constants";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export const maxDuration = 60;
 
@@ -153,6 +154,19 @@ export async function POST(req: NextRequest) {
       tags: [challenge.tech, ...challenge.tags],
     });
   }
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "challenge_submitted",
+    properties: {
+      verdict: review.verdict,
+      score: review.score,
+      tech: challenge.tech,
+      difficulty: challenge.difficulty,
+      first_accept: accepted && !priorAccepted,
+    },
+  });
 
   return NextResponse.json({
     score: review.score,

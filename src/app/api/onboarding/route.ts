@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { requireUser } from "@/lib/api-auth";
 import { User } from "@/models";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export async function POST(req: NextRequest) {
   const { session, error } = await requireUser();
@@ -23,6 +24,13 @@ export async function POST(req: NextRequest) {
     "onboarding.companies": companies ?? [],
     "onboarding.dailyGoal": dailyGoal,
     "onboarding.completedAt": new Date(),
+  });
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "onboarding_completed",
+    properties: { goal, level, topics, daily_goal: dailyGoal, companies_count: companies?.length ?? 0 },
   });
 
   const res = NextResponse.json({ ok: true });

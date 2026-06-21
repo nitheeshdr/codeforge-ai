@@ -6,6 +6,7 @@ import { getLanguage } from "@/lib/constants";
 import { Question } from "@/models";
 import { runRequestSchema } from "@/schemas/execution";
 import { runTestSuite } from "@/services/execution";
+import { getPostHogServer } from "@/lib/posthog-server";
 
 export const maxDuration = 60;
 
@@ -68,6 +69,19 @@ export async function POST(req: NextRequest) {
 
   const suite = await runTestSuite(language, parsed.data.code, tests);
   const isCustomRun = parsed.data.customInput !== undefined;
+
+  const posthog = getPostHogServer();
+  posthog?.capture({
+    distinctId: session.user.id,
+    event: "code_run",
+    properties: {
+      language: language.id,
+      custom_input: isCustomRun,
+      passed_count: suite.passedCount,
+      total_count: suite.totalCount,
+      runtime_ms: suite.totalTimeMs,
+    },
+  });
 
   return NextResponse.json({
     custom: isCustomRun,

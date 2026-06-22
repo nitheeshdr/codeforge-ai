@@ -2,9 +2,24 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { create } from "zustand";
 import { useQuery } from "@tanstack/react-query";
-import { Building2, Code2, Paintbrush } from "lucide-react";
+import {
+  BarChart3,
+  Bookmark,
+  Building2,
+  Code2,
+  LayoutDashboard,
+  Map,
+  Moon,
+  NotebookPen,
+  Paintbrush,
+  Sparkles,
+  Sun,
+  Trophy,
+  Users,
+} from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -12,8 +27,22 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
+
+const NAV = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: Code2, label: "Problems", href: "/problems" },
+  { icon: Trophy, label: "Contests", href: "/contests" },
+  { icon: Map, label: "Roadmaps", href: "/roadmaps" },
+  { icon: Sparkles, label: "AI Tools", href: "/ai-tools" },
+  { icon: BarChart3, label: "Leaderboard", href: "/leaderboard" },
+  { icon: Users, label: "Forum", href: "/forum" },
+  { icon: Bookmark, label: "Bookmarks", href: "/bookmarks" },
+  { icon: NotebookPen, label: "Notes", href: "/notes" },
+  { icon: Building2, label: "Companies", href: "/companies" },
+];
 
 interface CommandSearchState {
   open: boolean;
@@ -39,7 +68,11 @@ export interface SearchResults {
 export function CommandSearch() {
   const { open, setOpen } = useCommandSearch();
   const router = useRouter();
+  const { resolvedTheme, setTheme } = useTheme();
   const [query, setQuery] = useState("");
+  const navMatches = NAV.filter((n) =>
+    n.label.toLowerCase().includes(query.trim().toLowerCase()),
+  );
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -76,9 +109,7 @@ export function CommandSearch() {
         onValueChange={setQuery}
       />
       <CommandList>
-        <CommandEmpty>
-          {query.length < 2 ? "Type at least 2 characters" : "No results found"}
-        </CommandEmpty>
+        <CommandEmpty>No results found</CommandEmpty>
         {!!data?.questions?.length && (
           <CommandGroup heading="Problems">
             {data.questions.map((q) => (
@@ -127,6 +158,34 @@ export function CommandSearch() {
             ))}
           </CommandGroup>
         )}
+
+        {navMatches.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Go to">
+              {navMatches.map((n) => (
+                <CommandItem key={n.href} value={`nav-${n.label}`} onSelect={() => go(n.href)}>
+                  <n.icon className="size-4" />
+                  {n.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
+
+        <CommandSeparator />
+        <CommandGroup heading="Actions">
+          <CommandItem
+            value="toggle-theme"
+            onSelect={() => {
+              setTheme(resolvedTheme === "dark" ? "light" : "dark");
+              setOpen(false);
+            }}
+          >
+            {resolvedTheme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+            Toggle theme
+          </CommandItem>
+        </CommandGroup>
       </CommandList>
     </CommandDialog>
   );

@@ -1,5 +1,14 @@
 import { APP_NAME } from "@/lib/constants";
 import { InfoLayout } from "@/components/shared/info-layout";
+import { Sparkles, TrendingUp, Check } from "@/components/icons";
+
+const ACCENT = "#006bff";
+
+const CATEGORIES = [
+  { key: "new", label: "New", icon: Sparkles, color: ACCENT },
+  { key: "improved", label: "Improved", icon: TrendingUp, color: "#d97706" },
+  { key: "fixed", label: "Fixed", icon: Check, color: "#059669" },
+] as const;
 
 export const metadata = {
   title: `Changelog — ${APP_NAME}`,
@@ -230,83 +239,68 @@ const RELEASES = [
 export default function ChangelogPage() {
   return (
     <InfoLayout>
+      {/* header */}
       <div className="mb-12">
-        <h1 className="text-3xl font-black tracking-tight">Changelog</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 text-[13px] font-medium tracking-tight" style={{ color: ACCENT }}>
+          <span className="size-1.5 rounded-full" style={{ background: ACCENT }} />
+          Changelog
+        </span>
+        <h1 className="mt-3 text-3xl font-semibold tracking-[-0.03em] sm:text-4xl">
+          What&rsquo;s new in {APP_NAME}
+        </h1>
+        <p className="mt-3 text-base text-muted-foreground">
           Every release, every fix, every improvement — documented here.
         </p>
       </div>
 
-        <div className="relative space-y-12">
-          {/* Vertical timeline line */}
-          <div className="absolute left-[7px] top-2 bottom-2 w-px bg-border" />
-
-          {RELEASES.map((release) => (
-            <div key={release.version} className="relative pl-8">
-              {/* Timeline dot */}
-              <div className="absolute left-0 top-1.5 size-3.5 rounded-full border-2 border-primary bg-background" />
-
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <h2 className="text-xl font-black">v{release.version}</h2>
-                <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${release.tagColor}`}>
-                  {release.tag}
-                </span>
-                <span className="text-xs text-muted-foreground">{release.date}</span>
-              </div>
-
-              <div className="space-y-5">
-                {release.changes.new.length > 0 && (
-                  <div>
-                    <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-green-500">
-                      ✦ New
-                    </h3>
-                    <ul className="space-y-1.5">
-                      {release.changes.new.map((item) => (
-                        <li key={item} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="mt-0.5 shrink-0 text-green-500">+</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {release.changes.improved.length > 0 && (
-                  <div>
-                    <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-500">
-                      ↑ Improved
-                    </h3>
-                    <ul className="space-y-1.5">
-                      {release.changes.improved.map((item) => (
-                        <li key={item} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="mt-0.5 shrink-0 text-blue-500">~</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {release.changes.fixed.length > 0 && (
-                  <div>
-                    <h3 className="mb-2 text-xs font-bold uppercase tracking-widest text-blue-600">
-                      ✗ Fixed
-                    </h3>
-                    <ul className="space-y-1.5">
-                      {release.changes.fixed.map((item) => (
-                        <li key={item} className="flex gap-2 text-sm text-muted-foreground">
-                          <span className="mt-0.5 shrink-0 text-blue-600">×</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+      <div className="space-y-5">
+        {RELEASES.map((release) => (
+          <article
+            key={release.version}
+            className="rounded-2xl border bg-card p-6 shadow-sm sm:p-7"
+          >
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <h2 className="font-mono text-lg font-semibold tabular-nums tracking-tight">
+                v{release.version}
+              </h2>
+              <span className={`rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${release.tagColor}`}>
+                {release.tag}
+              </span>
+              <span className="ml-auto text-xs text-muted-foreground">{release.date}</span>
             </div>
-          ))}
-        </div>
 
+            <div className="mt-6 space-y-6">
+              {CATEGORIES.map(({ key, label, icon: Icon, color }) => {
+                const items = release.changes[key];
+                if (!items || items.length === 0) return null;
+                return (
+                  <div key={key}>
+                    <div className="mb-3 flex items-center gap-2">
+                      <span
+                        className="flex size-6 items-center justify-center rounded-md"
+                        style={{ background: `${color}1a`, color }}
+                      >
+                        <Icon className="size-3.5" />
+                      </span>
+                      <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground/80">
+                        {label}
+                      </h3>
+                      <span className="text-[11px] text-muted-foreground">{items.length}</span>
+                    </div>
+                    <ul className="space-y-2 border-l pl-4" style={{ borderColor: `${color}33` }}>
+                      {items.map((item) => (
+                        <li key={item} className="text-sm leading-relaxed text-muted-foreground">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </article>
+        ))}
+      </div>
     </InfoLayout>
   );
 }

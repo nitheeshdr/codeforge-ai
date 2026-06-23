@@ -409,6 +409,17 @@
   background: transparent;
 }
 
+/* Opt-out utility: fully hide the scrollbar (e.g. horizontal card sliders) */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
 /* Markdown prose for problem descriptions / AI chat */
 .prose-codeforge {
   @apply text-sm leading-relaxed text-foreground/90;

@@ -376,7 +376,7 @@ function CardSlider({ children }: { children: ReactNode }) {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerEnd}
         onPointerCancel={onPointerEnd}
-        className="flex cursor-grab snap-x snap-mandatory select-none gap-4 overflow-x-auto pb-2 active:cursor-grabbing [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&_img]:pointer-events-none"
+        className="no-scrollbar flex cursor-grab snap-x snap-mandatory select-none gap-4 overflow-x-auto pb-2 active:cursor-grabbing [-webkit-overflow-scrolling:touch] [&_img]:pointer-events-none"
       >
         {children}
       </div>
@@ -418,10 +418,12 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
               </a>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="hidden min-[360px]:inline-flex">
+              <ThemeToggle />
+            </span>
             {signedIn ? (
-              <Button asChild size="sm" className={primaryBtn}>
+              <Button asChild size="sm" className={cn(primaryBtn, "px-3 sm:px-4")}>
                 <Link href="/dashboard">Dashboard <ArrowRight className="size-4" /></Link>
               </Button>
             ) : (
@@ -429,7 +431,7 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
                 <Button asChild variant="ghost" size="sm" className={cn("hidden sm:inline-flex h-10 rounded-md px-3", ink2)}>
                   <Link href="/login">Sign In</Link>
                 </Button>
-                <Button asChild size="sm" className={primaryBtn}>
+                <Button asChild size="sm" className={cn(primaryBtn, "px-3 sm:px-4")}>
                   <Link href="/register">Get Started</Link>
                 </Button>
               </>
@@ -465,7 +467,7 @@ export function Landing({ signedIn, problems, totalProblems }: { signedIn: boole
           <div aria-hidden className="bg-dots pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(70%_60%_at_50%_0%,black,transparent)]" />
           <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(0,107,255,0.10),transparent)]" />
 
-          <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 py-10 sm:gap-12 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-28">
+          <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-8 px-4 py-10 sm:gap-12 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:py-28">
             <div>
               <div className={cn("inline-flex max-w-full items-center gap-2 rounded-full border bg-white/70 px-3 py-1 text-[12px] backdrop-blur sm:text-[13px] dark:bg-neutral-900/70", border, ink2)}>
                 <Sparkles className="size-3.5 shrink-0" style={{ color: ACCENT }} />
@@ -682,7 +684,7 @@ for (let i = 0; i < nums.length; i++) {
 
             {/* compiler — full-width highlight */}
             <Reveal delay={0.05} className="mt-4">
-              <div id="compiler" className={cn("grid scroll-mt-20 gap-8 p-6 sm:p-8 lg:grid-cols-2 lg:items-center", card)}>
+              <div id="compiler" className={cn("grid grid-cols-1 scroll-mt-20 gap-8 p-6 sm:p-8 lg:grid-cols-2 lg:items-center", card)}>
                 <div>
                   <span className={cn("flex size-9 items-center justify-center rounded-md border", border)} style={{ background: `${ACCENT}0d` }}>
                     <Terminal className="size-4.5" style={{ color: ACCENT }} />
